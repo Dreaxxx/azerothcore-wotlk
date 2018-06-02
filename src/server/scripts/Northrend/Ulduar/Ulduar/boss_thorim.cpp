@@ -741,7 +741,7 @@ public:
                     break;
                 case EVENT_THORIM_FILL_ARENA:
                     SpawnArenaNPCs();
-                    events.RepeatEvent(10000);
+                    events.RepeatEvent(12500);
                     PlaySpecial();
                     break;
                 case EVENT_THORIM_UNBALANCING_STRIKE:
@@ -1426,7 +1426,7 @@ public:
         void EnterCombat(Unit*)
         {
             events.CancelEvent(EVENT_RC_RUNIC_SMASH);
-            events.ScheduleEvent(EVENT_RC_RUNIC_BARRIER, 10000);
+            events.ScheduleEvent(EVENT_RC_RUNIC_BARRIER, 20000);
             events.ScheduleEvent(EVENT_RC_SMASH, 18000);
             events.ScheduleEvent(EVENT_RC_CHARGE, 15000);
 
