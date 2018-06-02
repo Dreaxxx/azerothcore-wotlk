@@ -29,7 +29,7 @@ enum Spells
     SPELL_INFORM_DEAD_KNIGHT        = 27931,
     SPELL_INFORM_DEAD_RIDER         = 27937,
 
-    // TRAINEES
+// TRAINEES
     SPELL_DEATH_PLAGUE              = 55604,    // LIVING TRAINEE
     SPELL_ARCANE_EXPLOSION          = 27989,    // DEAD TRAINEE (20y)
 
@@ -422,7 +422,7 @@ public:
                         Talk(SAY_TELEPORT);
                         me->NearTeleportTo(PosGroundLivingSide.GetPositionX(), PosGroundLivingSide.GetPositionY(), PosGroundLivingSide.GetPositionZ(), PosGroundLivingSide.GetOrientation());
                         me->SetReactState(REACT_AGGRESSIVE);
-                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_IMMUNE_TO_PC|UNIT_FLAG_DISABLE_MOVE);
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_IMMUNE_TO_PC);
                         
                         summons.DoAction(ACTION_GATE_OPEN);
                         summons.DoZoneInCombat();
@@ -630,8 +630,8 @@ public:
                     break;
             }
 
-			DoMeleeAttackIfReady();
-        }
+           DoMeleeAttackIfReady();
+        }        
     };
 
 };
