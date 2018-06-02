@@ -162,6 +162,7 @@ enum FreyaEvents
     EVENT_IRONBRANCH_THORN_SWARM                = 32,
 
     // SUMMONS
+    EVENT_CONSERVATOR_GRIP                      = 39,
     EVENT_ANCIENT_CONSERVATOR_NATURE_FURY       = 40,
     EVENT_WATER_SPIRIT_CHARGE                   = 45,
     EVENT_WATER_SPIRIT_DAMAGE                   = 46,
@@ -1157,7 +1158,7 @@ public:
             if (me->GetEntry() == NPC_ANCIENT_CONSERVATOR)
             {
                 me->CastSpell(me, SPELL_HEALTHY_SPORE_SUMMON, true);
-                me->CastSpell(me, SPELL_CONSERVATOR_GRIP, true);
+                events.ScheduleEvent(EVENT_CONSERVATOR_GRIP, 5000);
                 events.ScheduleEvent(EVENT_ANCIENT_CONSERVATOR_NATURE_FURY, 14000);
                 _stackCount = ACTION_REMOVE_25_STACK;
             }
@@ -1195,6 +1196,10 @@ public:
 
             switch (events.GetEvent())
             {
+                case EVENT_CONSERVATOR_GRIP:
+                    me->CastSpell(me, SPELL_CONSERVATOR_GRIP, true);
+                    events.PopEvent();
+                    break;
                 case EVENT_ANCIENT_CONSERVATOR_NATURE_FURY:
                     me->CastSpell(me->GetVictim(), SPELL_NATURE_FURY, false);
                     events.RepeatEvent(14000);
