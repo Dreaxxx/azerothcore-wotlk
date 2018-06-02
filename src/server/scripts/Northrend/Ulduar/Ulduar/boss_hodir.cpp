@@ -691,16 +691,16 @@ public:
             }
         }
 
-        void SpellHit(Unit*  /*caster*/, const SpellInfo* spell)
-        {
-            switch( spell->Id )
-            {
-                case SPELL_ICE_SHARDS_SMALL:
-                case SPELL_ICE_SHARDS_BIG:
-                    DoAction(1);
-                    break;
-            }
-        }
+       // void SpellHit(Unit*  /*caster*/, const SpellInfo* spell)
+       // {
+       //     switch( spell->Id )
+       //     {
+       //         case SPELL_ICE_SHARDS_SMALL:
+       //         case SPELL_ICE_SHARDS_BIG:
+       //             DoAction(1);
+       //             break;
+       //     }
+       // }
     };
 };
 
@@ -1031,7 +1031,7 @@ public:
         void ScheduleAbilities()
         {
             events.ScheduleEvent(EVENT_MAGE_FIREBALL, 3100);
-            events.ScheduleEvent(EVENT_MAGE_TOASTY_FIRE, 6000);
+            events.ScheduleEvent(EVENT_MAGE_TOASTY_FIRE, 3500);
             events.ScheduleEvent(EVENT_MAGE_MELT_ICE, 1000);
         }
 
@@ -1077,7 +1077,7 @@ public:
                     break;
                 case EVENT_MAGE_TOASTY_FIRE:
                     me->CastSpell(me, SPELL_MAGE_CONJURE_TOASTY_FIRE, false);
-                    events.RepeatEvent(10000);
+                    events.RepeatEvent(50000);
                     break;
                 case EVENT_MAGE_MELT_ICE:
                     {
