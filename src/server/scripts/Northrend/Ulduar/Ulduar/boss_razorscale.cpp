@@ -166,7 +166,7 @@ public:
             events.Reset();
             events.ScheduleEvent(EVENT_COMMANDER_SAY_AGGRO, 5000);
             events.ScheduleEvent(EVENT_EE_SAY_MOVE_OUT, 10000);
-            events.ScheduleEvent(EVENT_ENRAGE, 600000);
+            events.ScheduleEvent(EVENT_ENRAGE, 900000);
             events.ScheduleEvent(EVENT_SPELL_FIREBALL, 6000);
             events.ScheduleEvent(EVENT_SPELL_DEVOURING_FLAME, 13000);
             events.ScheduleEvent(EVENT_SUMMON_MOLE_MACHINES, 11000);
@@ -330,7 +330,7 @@ public:
                     break;
                 case EVENT_ENRAGE:
                     me->CastSpell(me, SPELL_BERSERK, true);
-                    events.RepeatEvent(600000);
+                    events.RepeatEvent(900000);
                     break;
                 case EVENT_COMMANDER_SAY_AGGRO:
                     if (Creature* commander = ObjectAccessor::GetCreature(*me, CommanderGUID))
