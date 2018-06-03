@@ -1077,7 +1077,7 @@ public:
                     break;
                 case EVENT_MAGE_TOASTY_FIRE:
                     me->CastSpell(me, SPELL_MAGE_CONJURE_TOASTY_FIRE, false);
-                    events.RepeatEvent(50000);
+                    events.RepeatEvent(10000);
                     break;
                 case EVENT_MAGE_MELT_ICE:
                     {
