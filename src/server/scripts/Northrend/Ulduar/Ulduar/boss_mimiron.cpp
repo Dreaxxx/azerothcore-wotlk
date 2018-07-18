@@ -2318,7 +2318,7 @@ public:
         {
             CreateTime = time(NULL);
             events.Reset();
-            events.ScheduleEvent(EVENT_FLAMES_SPREAD, 5750);
+            events.ScheduleEvent(EVENT_FLAMES_SPREAD, 7800);
             if( Creature* flame = me->SummonCreature(NPC_FLAMES_SPREAD, me->GetPositionX(), me->GetPositionY(), 364.32f, 0.0f) )
             {
                 FlameList.push_back(flame->GetGUID());
@@ -2415,7 +2415,7 @@ public:
                             }
                         }
 
-                        events.RepeatEvent(5750);
+                        events.RepeatEvent(7800);
                     }
                     break;
             }
