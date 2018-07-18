@@ -3066,6 +3066,7 @@ void SpellMgr::LoadSpellCustomAttr()
             case 50526: // Wandering Plague
             case 53353: // Chimera Shot - Serpent trigger
             case 52752: // Ancestral Awakening Heal
+            case 63493: // Fusion Punch , Iron Council
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_NO_POSITIVE_TAKEN_BONUS;
                 break;
             case 65280: // Ulduar, Hodir, Singed

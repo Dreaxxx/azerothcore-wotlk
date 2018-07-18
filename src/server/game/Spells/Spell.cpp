@@ -2139,7 +2139,7 @@ void Spell::SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTar
         case SPELL_DAMAGE_CLASS_MAGIC:
             // 12.5y for chain heal spell since 3.2 patch
             if (isChainHeal)
-                jumpRadius = 12.5f;
+                jumpRadius = 10.0f;
             // 10y as default for magic chain spells
             else
                 jumpRadius = 10.0f;
