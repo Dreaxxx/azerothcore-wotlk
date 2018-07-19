@@ -379,7 +379,7 @@ public:
                     break;
             }
 
-            DoMeleeAttackIfReady();
+        //    DoMeleeAttackIfReady();
         }
     };
 };
