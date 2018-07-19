@@ -498,8 +498,6 @@ public:
                        caster->CastSpell(target, SPELL_CORRUPTED_RAGE, true);
                    else if( target->HasSpell(SPELL_JUDGEMENTS_OF_THE_WISDOM_RANK_1) || target->HasSpell(SPELL_JUDGEMENTS_OF_THE_WISDOM_RANK_1+1) || target->HasSpell(SPELL_JUDGEMENTS_OF_THE_WISDOM_RANK_1+2) )
                        caster->CastSpell(target, SPELL_CORRUPTED_WISDOM, true);
-                   else if( target->HasSpell(SPELL_ASPECT_OF_THE_VIPER) )
-                       caster->CastSpell(target, SPELL_ASPECT_OF_THE_VIPER, true);
                }
        }
 
