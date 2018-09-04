@@ -76,7 +76,7 @@ public:
 
         void MoveInLineOfSight(Unit *who)
         {
-            if ((!me->GetVictim() || me->GetVictim()->GetEntry() != NPC_ZOMBIE_CHOW) && who->GetEntry() == NPC_ZOMBIE_CHOW && me->IsWithinDistInMap(who, 6.5f))
+            if ((!me->GetVictim() || me->GetVictim()->GetEntry() != NPC_ZOMBIE_CHOW) && who->GetEntry() == NPC_ZOMBIE_CHOW && me->IsWithinDistInMap(who, 15))
             {
                 SetGazeOn(who);
                 me->MonsterTextEmote("%s spots a nearby zombie to devour!", 0, false);
@@ -174,6 +174,7 @@ public:
                     break;
                 case EVENT_SUMMON_ZOMBIE:
                     {
+<<<<<<< HEAD
                         uint8 rand = urand(0,2);
                         for (int32 i = 0; i < RAID_MODE(1,2); ++i)
                         {
@@ -194,6 +195,17 @@ public:
 
                         events.RepeatEvent(10000);
                         break;
+=======
+                    uint8 rand = urand(0,2);
+                    for (int32 i = 0; i < RAID_MODE(1,2); ++i)
+                    {
+                        me->SummonCreature(NPC_ZOMBIE_CHOW, zombiePos[urand(0,2)]);
+                        (rand == 2 ? rand = 0 : rand++);
+                    }
+
+                    events.RepeatEvent(10000);
+                    break;
+>>>>>>> parent of cbc5172b... Core/Scripts: Boss Gluth + Spell Infected Wound ... (#937)
                     }
                 case EVENT_CAN_EAT_ZOMBIE:
                     events.RepeatEvent(1000);
