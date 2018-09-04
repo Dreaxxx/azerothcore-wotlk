@@ -177,8 +177,14 @@ public:
                         uint8 rand = urand(0,2);
                         for (int32 i = 0; i < RAID_MODE(1,2); ++i)
                         {
+<<<<<<< HEAD
                             // 10n - should spawn only from mid gate 25 from all 3
                             // \1 |0 /2 pos
+=======
+                            // In 10 man raid, normal mode - should spawn only from mid gate
+                            // \1 |0 /2 pos
+                            // In 25 man raid - should spawn from all 3 gates
+>>>>>>> fa65a8070ace1f7e96880fbd380275624d0a07d8
                             if (me->GetMap()->GetDifficulty() == RAID_DIFFICULTY_10MAN_NORMAL)
                                 me->SummonCreature(NPC_ZOMBIE_CHOW, zombiePos[0]);
                             else

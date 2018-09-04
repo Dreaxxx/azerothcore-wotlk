@@ -120,6 +120,8 @@ World::World()
 
     m_CleaningFlags = 0;
 
+    m_configFileList = "";
+
     memset(rate_values, 0, sizeof(rate_values));
     memset(m_int_configs, 0, sizeof(m_int_configs));
     memset(m_bool_configs, 0, sizeof(m_bool_configs));
@@ -414,6 +416,43 @@ bool World::RemoveQueuedPlayer(WorldSession* sess)
     return found;
 }
 
+void World::LoadModuleConfigSettings()
+{
+    Tokenizer configFileList(GetConfigFileList(), ',');
+    for (auto i = configFileList.begin(); i != configFileList.end(); i++)
+    {
+        std::string configFile = (*i) + std::string(".conf");
+
+        std::string conf_path = _CONF_DIR;
+        std::string cfg_file = conf_path + "/" + configFile;
+
+#if PLATFORM == PLATFORM_WINDOWS
+        cfg_file = configFile;
+#endif
+        std::string cfg_def_file = cfg_file + ".dist";
+
+        // Load .conf.dist config
+        if (!sConfigMgr->LoadMore(cfg_def_file.c_str()))
+        {
+            sLog->outString();
+            sLog->outError("Module config: Invalid or missing configuration dist file : %s", cfg_def_file.c_str());
+            sLog->outError("Module config: Verify that the file exists and has \'[worldserver]' written in the top of the file!");
+            sLog->outError("Module config: Use default settings!");
+            sLog->outString();
+        }
+
+        // Load .conf config
+        if (!sConfigMgr->LoadMore(cfg_file.c_str()))
+        {
+            sLog->outString();
+            sLog->outError("Module config: Invalid or missing configuration file : %s", cfg_file.c_str());
+            sLog->outError("Module config: Verify that the file exists and has \'[worldserver]' written in the top of the file!");
+            sLog->outError("Module config: Use default settings!");
+            sLog->outString();
+        }
+    }
+}
+
 /// Initialize config values
 void World::LoadConfigSettings(bool reload)
 {
@@ -426,6 +465,7 @@ void World::LoadConfigSettings(bool reload)
         }
     }
 
+    LoadModuleConfigSettings();
     sScriptMgr->OnBeforeConfigLoad(reload);
 
     // Reload log levels and filters
@@ -1258,6 +1298,10 @@ void World::LoadConfigSettings(bool reload)
     m_int_configs[CONFIG_WINTERGRASP_RESTART_AFTER_CRASH] = sConfigMgr->GetIntDefault("Wintergrasp.CrashRestartTimer", 10);
 
     m_int_configs[CONFIG_BIRTHDAY_TIME] = sConfigMgr->GetIntDefault("BirthdayTime", 1222964635);
+    m_bool_configs[CONFIG_MINIGOB_MANABONK] = sConfigMgr->GetBoolDefault("Minigob.Manabonk.Enable", true);
+
+    m_bool_configs[CONFIG_ENABLE_CONTINENT_TRANSPORT] = sConfigMgr->GetBoolDefault("IsContinentTransport.Enabled", true);
+    m_bool_configs[CONFIG_ENABLE_CONTINENT_TRANSPORT_PRELOADING] = sConfigMgr->GetBoolDefault("IsPreloadedContinentTransport.Enabled", false);
 
     // call ScriptMgr if we're reloading the configuration
     sScriptMgr->OnAfterConfigLoad(reload);
@@ -1354,6 +1398,9 @@ void World::SetInitialWorldSettings()
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_OLD_CORPSES);
     stmt->setUInt32(0, 3 * DAY);
     CharacterDatabase.Execute(stmt);
+
+    ///- Custom Hook for loading DB items
+    sScriptMgr->OnLoadCustomDatabaseTable();
 
     ///- Load the DBC files
     sLog->outString("Initialize data stores...");
