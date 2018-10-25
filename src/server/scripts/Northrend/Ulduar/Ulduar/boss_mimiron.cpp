@@ -384,7 +384,7 @@ public:
             else
             {
                 events.ScheduleEvent(EVENT_MIMIRON_SAY_HARDMODE, 7000);
-                events.ScheduleEvent(EVENT_BERSERK, Is25ManRaid() ? 10*MINUTE*IN_MILLISECONDS : 8*MINUTE*IN_MILLISECONDS);
+                events.ScheduleEvent(EVENT_BERSERK, Is25ManRaid() ? 10*MINUTE*IN_MILLISECONDS : 10*MINUTE*IN_MILLISECONDS);
 
                 events.ScheduleEvent(EVENT_COMPUTER_SAY_INITIATED, 0);
                 events.ScheduleEvent(EVENT_COMPUTER_SAY_MINUTES, 3000);

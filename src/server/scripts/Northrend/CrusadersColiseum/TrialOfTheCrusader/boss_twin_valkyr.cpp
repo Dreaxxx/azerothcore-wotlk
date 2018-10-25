@@ -874,8 +874,8 @@ class spell_valkyr_ball_periodic_dummy : public SpellScriptLoader
                 if (Unit* target = GetTarget())
                     if (target->GetDisplayId() != 11686)
                         if (Creature* me = target->ToCreature())
-                            if (Player* p = me->SelectNearestPlayer(2.75f))
-                                if (me->GetExactDist2d(p) <= 2.75f)
+                            if (Player* p = me->SelectNearestPlayer(2.5f))
+                                if (me->GetExactDist2d(p) <= 2.5f)
                                 {
                                     me->AI()->DoAction(1); // despawning = true;
                                     me->GetMotionMaster()->MoveIdle();
