@@ -2158,7 +2158,7 @@ class spell_vehicle_circuit_overload : public SpellScriptLoader
             void OnPeriodic(AuraEffect const*  /*aurEff*/)
             {
                 if (Unit* target = GetTarget())
-                    if (int(target->GetAppliedAuras().count(SPELL_OVERLOAD_CIRCUIT)) >= (target->GetMap()->Is25ManRaid() ? 2 : 1))
+                    if (int(target->GetAppliedAuras().count(SPELL_OVERLOAD_CIRCUIT)) >= (target->GetMap()->Is25ManRaid() ? 4 : 2))
                     {
                          target->CastSpell(target, SPELL_SYSTEMS_SHUTDOWN, true);
                          target->RemoveAurasDueToSpell(SPELL_OVERLOAD_CIRCUIT);
