@@ -87,6 +87,7 @@ public:
             Talk(SAY_AGGRO);
             
             me->SetInCombatWithZone();
+            me->CallForHelp(VISIBLE_RANGE);
             events.ScheduleEvent(EVENT_SPELL_HATEFUL_STRIKE, 1200);
             events.ScheduleEvent(EVENT_SPELL_BERSERK, 360000);
             events.ScheduleEvent(EVENT_HEALTH_CHECK, 1000);
