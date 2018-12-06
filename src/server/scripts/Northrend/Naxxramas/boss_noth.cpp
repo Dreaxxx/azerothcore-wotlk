@@ -85,7 +85,7 @@ public:
             events.SetPhase(0);
 
             events.Reset();
-            events.ScheduleEvent(EVENT_MOVE_TO_BALCONY, 110000);
+            events.ScheduleEvent(EVENT_MOVE_TO_BALCONY, 90000);
             events.ScheduleEvent(EVENT_SPELL_CURSE, 15000);
             events.ScheduleEvent(EVENT_SUMMON_PLAGUED_WARRIOR_ANNOUNCE, 25000);
             if (Is25ManRaid())
@@ -101,7 +101,7 @@ public:
             events.SetPhase(1);
             events.Reset();
             events.ScheduleEvent(EVENT_BALCONY_SUMMON_ANNOUNCE, 4000);
-            events.ScheduleEvent(EVENT_MOVE_TO_GROUND, 70000);
+            events.ScheduleEvent(EVENT_MOVE_TO_GROUND, 90000);
         }
 
         void SummonHelper(uint32 entry, uint32 count)
@@ -154,6 +154,7 @@ public:
         {
             BossAI::JustDied(killer);
             Talk(SAY_DEATH);
+            me->NearTeleportTo(nothPosition.GetPositionX(), nothPosition.GetPositionY(), nothPosition.GetPositionZ(), nothPosition.GetOrientation(), true);
         }
 
         void KilledUnit(Unit* who)
