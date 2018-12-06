@@ -449,7 +449,7 @@ public:
                     break;
             }
 
-            DoMeleeAttackIfReady();
+       //     DoMeleeAttackIfReady();
         }
     };
 };
@@ -480,6 +480,13 @@ public:
         bool CanAIAttack(Unit const* target) const { return gateOpened || IsOnSameSide(target); }
 
         void Reset() { events.Reset(); }
+
+        void JustSummoned(Creature *summon)
+        {
+            summons.Summon(summon);
+            summon->SetInCombatWithZone();
+        }
+        
         void EnterCombat(Unit*  /*who*/)
         {
             me->SetInCombatWithZone();
