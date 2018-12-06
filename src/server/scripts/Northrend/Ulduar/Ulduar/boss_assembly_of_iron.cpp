@@ -132,6 +132,10 @@ enum Misc
     POINT_CHANNEL_STEELBREAKER  = 1
 };
 
+const Position molgeimPosition = {1589.54f, 106.986f, 427.41f, 2.3f};
+const Position steelbreakerPosition = {1587.18f, 121.027f, 427.26f, 0.9f};
+const Position brundirPosition = {1582.18f, 112.359f, 427.29f, 2.0f};
+
 bool IsEncounterComplete(InstanceScript* pInstance, Creature* me)
 {
    if (!pInstance || !me)
@@ -293,6 +297,7 @@ public:
             {
                 pInstance->SetData(TYPE_ASSEMBLY, DONE);
                 me->CastSpell(me, 65195, true); // credit
+                me->NearTeleportTo(steelbreakerPosition.GetPositionX(), steelbreakerPosition.GetPositionY(), steelbreakerPosition.GetPositionZ(), steelbreakerPosition.GetOrientation(), true);
             }
             else
             {
@@ -492,6 +497,7 @@ public:
             {
                 pInstance->SetData(TYPE_ASSEMBLY, DONE);
                 me->CastSpell(me, 65195, true); // credit
+                me->NearTeleportTo(molgeimPosition.GetPositionX(), molgeimPosition.GetPositionY(), molgeimPosition.GetPositionZ(), molgeimPosition.GetOrientation(), true);
             }
             else
             {
@@ -737,6 +743,7 @@ public:
             {
                 pInstance->SetData(TYPE_ASSEMBLY, DONE);
                 me->CastSpell(me, 65195, true); // credit
+                me->NearTeleportTo(brundirPosition.GetPositionX(), brundirPosition.GetPositionY(), brundirPosition.GetPositionZ(), brundirPosition.GetOrientation(), true);
             }
             else
             {
