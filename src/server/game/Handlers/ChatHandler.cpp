@@ -174,7 +174,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
     {
         uint32 specialMessageLimit = 0;
         // send in universal language if player in .gmon mode (ignore spell effects)
-        if (sender->IsGameMaster() || sender->InBattleground())
+        if (sender->IsGameMaster())
             lang = LANG_UNIVERSAL;
         else
         {
@@ -330,6 +330,10 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
                 SendNotification(GetTrinityString(LANG_SAY_REQ), sWorld->getIntConfig(CONFIG_CHAT_SAY_LEVEL_REQ));
                 return;
             }
+			
+			if (!GetPlayer()->IsGameMaster())
+                if (GetPlayer()->SendBattleGroundChat(type, msg))
+					return;
 
             if (type == CHAT_MSG_SAY)
                 sender->Say(msg, lang);
