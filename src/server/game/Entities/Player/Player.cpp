@@ -15663,15 +15663,15 @@ void Player::AddQuest(Quest const* quest, Object* questGiver)
     uint32 qtime = 0;
     if (quest->HasSpecialFlag(QUEST_SPECIAL_FLAGS_TIMED))
     {
-        uint32 timeAllowed = quest->GetTimeAllowed();
+        uint32 limittime = quest->GetLimitTime();
 
         // shared timed quest
         if (questGiver && questGiver->GetTypeId() == TYPEID_PLAYER)
-            timeAllowed = questGiver->ToPlayer()->getQuestStatusMap()[quest_id].Timer / IN_MILLISECONDS;
+            limittime = questGiver->ToPlayer()->getQuestStatusMap()[quest_id].Timer / IN_MILLISECONDS;
 
         AddTimedQuest(quest_id);
-        questStatusData.Timer = timeAllowed * IN_MILLISECONDS;
-        qtime = static_cast<uint32>(time(NULL)) + timeAllowed;
+        questStatusData.Timer = limittime * IN_MILLISECONDS;
+        qtime = static_cast<uint32>(time(NULL)) + limittime;
     }
     else
         questStatusData.Timer = 0;
@@ -15751,10 +15751,10 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
 
     for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
     {
-        if (quest->ItemDrop[i])
+        if (quest->RequiredSourceItemId[i])
         {
-            uint32 count = quest->ItemDropQuantity[i];
-            DestroyItemCount(quest->ItemDrop[i], count ? count : 9999, true);
+            uint32 count = quest->RequiredSourceItemCount[i];
+            DestroyItemCount(quest->RequiredSourceItemId[i], count ? count : 9999, true);
         }
     }
 
@@ -15990,9 +15990,9 @@ void Player::FailQuest(uint32 questId)
                 // Destroy items received on starting the quest.
                 DestroyItemCount(quest->RequiredItemId[i], quest->RequiredItemCount[i], true, true);
         for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
-            if (quest->ItemDrop[i] > 0 && quest->ItemDropQuantity[i] > 0)
+            if (quest->RequiredSourceItemId[i] > 0 && quest->RequiredSourceItemCount[i] > 0)
                 // Destroy items received during the quest.
-                DestroyItemCount(quest->ItemDrop[i], quest->ItemDropQuantity[i], true, true);
+                DestroyItemCount(quest->RequiredSourceItemId[i], quest->RequiredSourceItemCount[i], true, true);
     }
 }
 
@@ -16156,7 +16156,7 @@ bool Player::SatisfyQuestClass(Quest const* qInfo, bool msg) const
 
 bool Player::SatisfyQuestRace(Quest const* qInfo, bool msg) const
 { 
-    uint32 reqraces = qInfo->GetAllowableRaces();
+    uint32 reqraces = qInfo->GetRequiredRaces();
     if (reqraces == 0)
         return true;
     if ((reqraces & getRaceMask()) == 0)
@@ -17256,7 +17256,7 @@ bool Player::HasQuestForItem(uint32 itemid) const
             for (uint8 j = 0; j < QUEST_SOURCE_ITEM_IDS_COUNT; ++j)
             {
                 // examined item is a source item
-                if (qinfo->ItemDrop[j] == itemid)
+                if (qinfo->RequiredSourceItemId[j] == itemid)
                 {
                     ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemid);
 
@@ -17265,9 +17265,9 @@ bool Player::HasQuestForItem(uint32 itemid) const
                         return true;
 
                     // allows custom amount drop when not 0
-                    if (qinfo->ItemDropQuantity[j])
+                    if (qinfo->RequiredSourceItemCount[j])
                     {
-                        if (GetItemCount(itemid, true) < qinfo->ItemDropQuantity[j])
+                        if (GetItemCount(itemid, true) < qinfo->RequiredSourceItemCount[j])
                             return true;
                     } else if (GetItemCount(itemid, true) < pProto->GetMaxStackSize())
                         return true;
