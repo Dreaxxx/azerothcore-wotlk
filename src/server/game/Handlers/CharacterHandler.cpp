@@ -1220,6 +1220,8 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
 
     sScriptMgr->OnPlayerLogin(pCurrChar);
     delete holder;
+	if (pCurrChar->GetTeamId() != pCurrChar->GetCFSTeamId())
+        pCurrChar->FitPlayerInTeam(pCurrChar->GetBattleground() && !pCurrChar->GetBattleground()->isArena() ? true : false, pCurrChar->GetBattleground());
 }
 
 void WorldSession::HandlePlayerLoginToCharInWorld(Player* pCurrChar)
@@ -2562,7 +2564,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
                 {
                     Quest const* quest = iter->second;
                     uint32 newRaceMask = (team == TEAM_ALLIANCE) ? RACEMASK_ALLIANCE : RACEMASK_HORDE;
-                    if (quest->GetRequiredRaces() && !(quest->GetRequiredRaces() & newRaceMask))
+                    if (quest->GetAllowableRaces() && !(quest->GetAllowableRaces() & newRaceMask))
                     {
                         stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHAR_QUESTSTATUS_REWARDED_ACTIVE_BY_QUEST);
                         stmt->setUInt32(0, quest->GetQuestId());
