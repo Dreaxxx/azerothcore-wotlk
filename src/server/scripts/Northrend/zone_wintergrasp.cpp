@@ -275,8 +275,8 @@ class npc_wg_queue : public CreatureScript
 
         bool OnGossipHello(Player* player, Creature* creature)
         {
-            if (!sWorld->getBoolConfig(CONFIG_MINIGOB_MANABONK))
-                return false;
+            /* if (!sWorld->getBoolConfig(CONFIG_MINIGOB_MANABONK))
+                return false; */
 
             if (creature->IsQuestGiver())
                 player->PrepareQuestMenu(creature->GetGUID());
