@@ -189,6 +189,10 @@ Battleground::Battleground()
 
     // pussywizard:
     m_UpdateTimer = 0;
+	
+	m_AlliancePlayersCount = 0;
+	m_HordePlayersCount = 0;
+	m_SwitchTeam = true;
 }
 
 Battleground::~Battleground()
@@ -263,7 +267,7 @@ void Battleground::Update(uint32 diff)
             else
             {
                 _ProcessResurrect(diff);
-                if (sBattlegroundMgr->GetPrematureFinishTime() && (GetPlayersCountByTeam(TEAM_ALLIANCE) < GetMinPlayersPerTeam() || GetPlayersCountByTeam(TEAM_HORDE) < GetMinPlayersPerTeam()))
+                if (sBattlegroundMgr->GetPrematureFinishTime() && (GetAlliancePlayersCount() == 0 || GetHordePlayersCount() == 0))
                     _ProcessProgress(diff);
                 else if (m_PrematureCountDown)
                     m_PrematureCountDown = false;
@@ -1108,6 +1112,21 @@ void Battleground::RemovePlayerAtLeave(Player* player)
     }
 
     player->RemoveAurasByType(SPELL_AURA_MOUNTED);
+	
+	if(!isArena()) {
+		if (player->GetTeamId() == TEAM_ALLIANCE) {
+			if(GetAlliancePlayersCount() != 0)
+				this->m_AlliancePlayersCount--;
+		}
+		else {
+			if(GetHordePlayersCount() != 0)
+				this->m_HordePlayersCount--;
+		}
+		
+		if (GetAlliancePlayersCount() >= GetHordePlayersCount())
+			setSwitchTeam(false);
+		else setSwitchTeam(true);
+	}
 
     // BG subclass specific code
     RemovePlayer(player);
@@ -1218,7 +1237,7 @@ void Battleground::AddPlayer(Player* player)
 	if (isArena())
 	    teamId = player->GetBgTeamId();
 
-	if (!isArena()){
+	/*if (!isArena()){
 		if (!player->GetGroup()){	
 			//sLog->outError("Not in GROUP");
 			if (((m_PlayersCount[player->GetCFSTeamId() == TEAM_HORDE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()) || ((m_PlayersCount[player->GetCFSTeamId() == TEAM_ALLIANCE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()))
@@ -1266,7 +1285,30 @@ void Battleground::AddPlayer(Player* player)
 							}
 						}
 		}
-	}
+	}*/
+	
+	if (!isArena()){
+ 		if (!player->GetGroup()) {
+ 			if (GetHordePlayersCount() >= GetAlliancePlayersCount()) {
+ 				player->mFake_team = TEAM_ALLIANCE;
+				teamId = TEAM_ALLIANCE;
+ 				player->SetBGTeamId(teamId);
+				this->m_AlliancePlayersCount++;
+ 				float x, y, z, o;
+ 				GetTeamStartLoc(teamId, x, y, z, o);
+ 				player->TeleportTo(GetMapId(), x, y, z, o);
+ 			}
+			else {
+				player->mFake_team = TEAM_HORDE;
+				teamId = TEAM_HORDE;
+ 				player->SetBGTeamId(teamId);
+				this->m_HordePlayersCount++;
+ 				float x, y, z, o;
+ 				GetTeamStartLoc(teamId, x, y, z, o);
+ 				player->TeleportTo(GetMapId(), x, y, z, o);
+			}
+ 		}
+ 	}
 
     // Add to list/maps
     m_Players[guid] = player;
