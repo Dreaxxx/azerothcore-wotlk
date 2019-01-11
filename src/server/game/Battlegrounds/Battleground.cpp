@@ -1123,9 +1123,13 @@ void Battleground::RemovePlayerAtLeave(Player* player)
 				this->m_HordePlayersCount--;
 		}
 		
-		if (GetAlliancePlayersCount() >= GetHordePlayersCount())
+		if (GetAlliancePlayersCount() <= GetHordePlayersCount())
 			setSwitchTeam(false);
 		else setSwitchTeam(true);
+
+        if (GetHordePlayersCount() <= GetAlliancePlayersCount())
+            setSwitchTeam(false);
+        else setSwitchTeam(true);
 	}
 
     // BG subclass specific code
