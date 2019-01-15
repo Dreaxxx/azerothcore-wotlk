@@ -373,10 +373,6 @@ class Battleground
         TeamId GetWinner() const             { return m_WinnerId; }
         uint32 GetScriptId() const          { return ScriptId; }
         uint32 GetBonusHonorFromKill(uint32 kills) const;
-		
-		uint32 GetAlliancePlayersCount() const          { return m_AlliancePlayersCount; }
-        uint32 GetHordePlayersCount() const             { return m_HordePlayersCount; }
-		bool GetSwitchTeam() const        { return m_SwitchTeam; }
 
         // Set methods:
         void SetName(char const* Name)      { m_Name = Name; }
@@ -393,8 +389,6 @@ class Battleground
         void SetArenaorBGType(bool _isArena) { m_IsArena = _isArena; }
         void SetWinner(TeamId winner)        { m_WinnerId = winner; }
         void SetScriptId(uint32 scriptId)   { ScriptId = scriptId; }
-		
-		void setSwitchTeam(bool switchTeam)             { m_SwitchTeam = switchTeam; }
 
         void ModifyStartDelayTime(int32 diff) { m_StartDelayTime -= diff; }
         void SetStartDelayTime(int32 Time)    { m_StartDelayTime = Time; }
@@ -758,9 +752,5 @@ class Battleground
         float m_TeamStartLocO[BG_TEAMS_COUNT];
         float m_StartMaxDist;
         uint32 ScriptId;
-	public:
-		uint32 m_AlliancePlayersCount;
-		uint32 m_HordePlayersCount;
-		bool m_SwitchTeam;
 };
 #endif
