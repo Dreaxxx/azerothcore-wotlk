@@ -259,7 +259,14 @@ bool BattlegroundQueue::FillXPlayersToBG(BattlegroundBracketId bracket_id, Battl
 				if ((*itr)->IsInvitedToBGInstanceGUID)
 					continue;
 
-				bool alliance = (*itr)->CFSteamId == TEAM_ALLIANCE;
+				if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() > m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
+					(*itr)->second->teamId = TEAM_ALLIANCE;
+				else if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() < m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
+					(*itr)->second->teamId = TEAM_HORDE;
+				else
+					(*itr)->second->teamId = TeamId(urand(0, 1));
+
+				bool alliance = (*itr)->teamId == TEAM_ALLIANCE;
 
 				if (alliance) {
 					m_PreGroupMap_a.insert(std::make_pair((*itr)->Players.size(), *itr));
@@ -328,7 +335,15 @@ int32 BattlegroundQueue::PreAddPlayers(QueuedGroupMap m_PreGroupMap, int32 MaxAd
 
 	for (QueuedGroupMap::reverse_iterator itr = m_PreGroupMap.rbegin(); itr != m_PreGroupMap.rend(); ++itr) {
 		int32 PlayerSize = itr->first;
-		bool alliance = itr->second->CFSteamId == TEAM_ALLIANCE;
+		
+		if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() > m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
+			itr->second->teamId = TEAM_ALLIANCE;
+		else if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() < m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
+			itr->second->teamId = TEAM_HORDE;
+		else
+			itr->second->teamId = TeamId(urand(0, 1));
+
+		bool alliance = itr->second->teamId == TEAM_ALLIANCE;
 
 		if (PlayerSize <= LeftToAdd && m_SelectionPools[alliance ? TEAM_ALLIANCE : TEAM_HORDE].AddGroup(itr->second, MaxInTeam))
 			LeftToAdd -= PlayerSize, Added -= PlayerSize;
