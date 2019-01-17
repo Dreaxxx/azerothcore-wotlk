@@ -260,11 +260,11 @@ bool BattlegroundQueue::FillXPlayersToBG(BattlegroundBracketId bracket_id, Battl
 					continue;
 
 				if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() > m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
-					(*itr)->second->teamId = TEAM_ALLIANCE;
+					(*itr)->teamId = TEAM_ALLIANCE;
 				else if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() < m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
-					(*itr)->second->teamId = TEAM_HORDE;
+					(*itr)->teamId = TEAM_HORDE;
 				else
-					(*itr)->second->teamId = TeamId(urand(0, 1));
+					(*itr)->teamId = TeamId(urand(0, 1));
 
 				bool alliance = (*itr)->teamId == TEAM_ALLIANCE;
 
