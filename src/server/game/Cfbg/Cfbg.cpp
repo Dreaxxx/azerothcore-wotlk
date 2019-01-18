@@ -308,13 +308,6 @@ bool BattlegroundQueue::FillXPlayersToBG(BattlegroundBracketId bracket_id, Battl
 
 			if (diff > 0)
 				ginfo->teamId = moreAli ? TEAM_ALLIANCE : TEAM_HORDE;
-			
-			if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() > m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
-				itr->second->teamId = TEAM_ALLIANCE;
-			else if (m_SelectionPools[TEAM_HORDE].GetPlayerCount() < m_SelectionPools[TEAM_ALLIANCE].GetPlayerCount())
-				itr->second->teamId = TEAM_HORDE;
-			else
-				itr->second->teamId = TeamId(urand(0, 1));
 
 			bool alliance = ginfo->teamId == TEAM_ALLIANCE;
 

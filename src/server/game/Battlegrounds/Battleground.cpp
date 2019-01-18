@@ -1218,55 +1218,56 @@ void Battleground::AddPlayer(Player* player)
 	if (isArena())
 	    teamId = player->GetBgTeamId();
 
-	/*if (!isArena()){
-		if (!player->GetGroup()){	
-			//sLog->outError("Not in GROUP");
-			if (((m_PlayersCount[player->GetCFSTeamId() == TEAM_HORDE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()) || ((m_PlayersCount[player->GetCFSTeamId() == TEAM_ALLIANCE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()))
-			{
-				//sLog->outError("REFRACT without group");
-				player->mFake_team = GetOtherTeamId(player->GetCFSTeamId());
-				teamId = GetOtherTeamId(player->GetCFSTeamId());
-				player->SetBGTeamId(teamId);
+    if (!isArena()){
+        if (!player->GetGroup()){   
+            //sLog->outError("Not in GROUP");
+            if (((m_PlayersCount[player->GetCFSTeamId() == TEAM_HORDE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()) || ((m_PlayersCount[player->GetCFSTeamId() == TEAM_ALLIANCE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()))
+            {
+                //sLog->outError("REFRACT without group");
+                player->mFake_team = GetOtherTeamId(player->GetCFSTeamId());
+                teamId = GetOtherTeamId(player->GetCFSTeamId());
+                player->SetBGTeamId(teamId);
 
-				float x, y, z, o;
-				GetTeamStartLoc(teamId, x, y, z, o);
-				player->TeleportTo(GetMapId(), x, y, z, o);
-			}
-		}
-		else{
-			// player in Group
-			bool FirstFromGroup_OnBG = true;
-			for (GroupReference* itr = player->GetGroup()->GetFirstMember(); itr != NULL; itr = itr->next())
-				if (Player* player_inBG = itr->GetSource())
-					if (player_inBG->GetGUID() != player->GetGUID())
-						if (IsPlayerInBattleground(player_inBG->GetGUID()))
-						{
-							sLog->outError("Player %s: Group member on this BG", player->GetName().c_str());
-							player->mFake_team = player_inBG->GetCFSTeamId();
-							teamId = player_inBG->GetCFSTeamId();
-							player->SetBGTeamId(teamId);
+                float x, y, z, o;
+                GetTeamStartLoc(teamId, x, y, z, o);
+                player->TeleportTo(GetMapId(), x, y, z, o);
+            }
+        }
+        else{
+            // player in Group
+            bool FirstFromGroup_OnBG = true;
+            for (GroupReference* itr = player->GetGroup()->GetFirstMember(); itr != NULL; itr = itr->next())
+                if (Player* player_inBG = itr->GetSource())
+                    if (player_inBG->GetGUID() != player->GetGUID())
+                        if (IsPlayerInBattleground(player_inBG->GetGUID()))
+                        {
+                            sLog->outError("Player %s: Group member on this BG", player->GetName().c_str());
+                            player->mFake_team = player_inBG->GetCFSTeamId();
+                            teamId = player_inBG->GetCFSTeamId();
+                            player->SetBGTeamId(teamId);
 
-							float x, y, z, o;
-							GetTeamStartLoc(teamId, x, y, z, o);
-							player->TeleportTo(GetMapId(), x, y, z, o);
-							FirstFromGroup_OnBG = false;
-							break;
-						};
-						if (FirstFromGroup_OnBG){
-							sLog->outError("Player %s: You are first on this BG", player->GetName().c_str());
-							if (((m_PlayersCount[player->GetCFSTeamId() == TEAM_HORDE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()) || ((m_PlayersCount[player->GetCFSTeamId() == TEAM_ALLIANCE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()))
-							{
-								player->mFake_team = GetOtherTeamId(player->GetCFSTeamId());
-								teamId = GetOtherTeamId(player->GetCFSTeamId());
-								player->SetBGTeamId(teamId);
+                            float x, y, z, o;
+                            GetTeamStartLoc(teamId, x, y, z, o);
+                            player->TeleportTo(GetMapId(), x, y, z, o);
+                            FirstFromGroup_OnBG = false;
+                            break;
+                        };
+                        if (FirstFromGroup_OnBG) 
+                        {
+                            sLog->outError("Player %s: You are first on this BG", player->GetName().c_str());
+                            if (((m_PlayersCount[player->GetCFSTeamId() == TEAM_HORDE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()) || ((m_PlayersCount[player->GetCFSTeamId() == TEAM_ALLIANCE] > m_PlayersCount[GetOtherTeamId(player->GetCFSTeamId())]) && !isArena()))
+                            {
+                                player->mFake_team = GetOtherTeamId(player->GetCFSTeamId());
+                                teamId = GetOtherTeamId(player->GetCFSTeamId());
+                                player->SetBGTeamId(teamId);
 
-								float x, y, z, o;
-								GetTeamStartLoc(teamId, x, y, z, o);
-								player->TeleportTo(GetMapId(), x, y, z, o);
-							}
-						}
-		}
-	}*/
+                                float x, y, z, o;
+                                GetTeamStartLoc(teamId, x, y, z, o);
+                                player->TeleportTo(GetMapId(), x, y, z, o);
+                            }
+                        }
+        }
+    }
 
     // Add to list/maps
     m_Players[guid] = player;
