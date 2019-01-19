@@ -19432,7 +19432,7 @@ void Unit::BuildCooldownPacket(WorldPacket& data, uint8 flags, PacketCooldowns c
     }
 }
 
-/*uint8 Unit::getRace(bool original) const
+uint8 Unit::getRace(bool original) const
 {
     if (GetTypeId() == TYPEID_PLAYER)
     {
@@ -19443,7 +19443,7 @@ void Unit::BuildCooldownPacket(WorldPacket& data, uint8 flags, PacketCooldowns c
     }
 
     return GetByteValue(UNIT_FIELD_BYTES_0, 0);
-}*/
+}
 
 void Unit::setRace(uint8 race)
 {
