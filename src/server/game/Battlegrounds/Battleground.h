@@ -376,7 +376,6 @@ class Battleground
 		
 		uint32 GetAlliancePlayersCount() const          { return m_AlliancePlayersCount; }
         uint32 GetHordePlayersCount() const             { return m_HordePlayersCount; }
-		bool GetSwitchTeam() const        { return m_SwitchTeam; }
 
         // Set methods:
         void SetName(char const* Name)      { m_Name = Name; }

@@ -215,7 +215,7 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket & recvData)
                  _player->InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_5v5)) // can't be already queued for arenas
             err = ERR_BATTLEGROUND_QUEUED_FOR_RATED;
 		else if (joinAsGroup)
-			err = ERR_BATTLEGROUND_JOIN_FAILED;
+			err = err = ERR_BATTLEGROUND_JOIN_FAILED;
 
         if (err > 0)
             err = grp->CanJoinBattlegroundQueue(bgt, bgQueueTypeId, 0, bgt->GetMaxPlayersPerTeam(), false, 0);
