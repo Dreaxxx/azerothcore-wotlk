@@ -68,13 +68,13 @@ class boss_krik_thir : public CreatureScript
                 BossAI::Reset();
                 events2.Reset();
 
-                me->SummonCreature(NPC_WATCHER_NARJIL, 511.8f, 666.493f, 776.278f, 0.977f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_WATCHER_NARJIL, 508.57f, 666.376f, 776.374f, 0.95f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_SHADOWCASTER, 504.94f, 664.52f, 776.89f, 1.295f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_WARRIOR, 506.75f, 670.7f, 776.24f, 0.92f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);   
-                me->SummonCreature(NPC_WATCHER_GASHRA, 527.79f, 670.94f, 775.565f, 1.45f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_WATCHER_GASHRA, 526.8f, 663.97f, 775.713f, 1.46f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_SKIRMISHER, 524.25f, 668.02f, 775.65f, 1.24f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_WARRIOR, 530.1f, 667.73f, 775.61f, 1.68f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-                me->SummonCreature(NPC_WATCHER_SILTHIK, 543.826f, 665.123f, 776.245f, 1.55f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_WATCHER_SILTHIK, 546.147f, 663.203f, 776.763f, 1.759f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_SKIRMISHER, 547.83f, 667.96f, 776.15f, 2.05f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_SHADOWCASTER, 549.76f, 664.32f, 776.76f, 2.12f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
             }
