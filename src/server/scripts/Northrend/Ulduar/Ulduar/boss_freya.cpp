@@ -595,7 +595,7 @@ public:
                 break;
             }
             case EVENT_FREYA_SUNBEAM:
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                     me->CastSpell(target, SPELL_SUNBEAM, false);
                 events.RepeatEvent(15000+urand(0,5000));
                 break;
