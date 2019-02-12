@@ -69,14 +69,14 @@ class boss_krik_thir : public CreatureScript
                 events2.Reset();
 
                 me->SummonCreature(NPC_WATCHER_NARJIL, 511.8f, 666.493f, 776.278f, 0.977f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-                me->SummonCreature(NPC_SHADOWCASTER, 518.13f, 667.0f, 775.74f, 1.0f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_SHADOWCASTER, 504.94f, 664.52f, 776.89f, 1.295f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_WARRIOR, 506.75f, 670.7f, 776.24f, 0.92f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);   
-                me->SummonCreature(NPC_WATCHER_GASHRA, 526.66f, 663.605f, 775.805f, 1.23f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-                me->SummonCreature(NPC_SKIRMISHER, 522.23f, 668.97f, 775.66f, 1.18f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-                me->SummonCreature(NPC_WARRIOR, 532.4f, 666.47f, 775.67f, 1.45f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_WATCHER_GASHRA, 527.79f, 670.94f, 775.565f, 1.45f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_SKIRMISHER, 524.25f, 668.02f, 775.65f, 1.24f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_WARRIOR, 530.1f, 667.73f, 775.61f, 1.68f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 me->SummonCreature(NPC_WATCHER_SILTHIK, 543.826f, 665.123f, 776.245f, 1.55f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-                me->SummonCreature(NPC_SKIRMISHER, 547.5f, 669.96f, 776.1f, 2.3f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-                me->SummonCreature(NPC_SHADOWCASTER, 536.96f, 667.28f, 775.6f, 1.72f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_SKIRMISHER, 547.83f, 667.96f, 776.15f, 2.05f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                me->SummonCreature(NPC_SHADOWCASTER, 549.76f, 664.32f, 776.76f, 2.12f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
             }
 
             void MoveInLineOfSight(Unit *who)
