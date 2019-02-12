@@ -778,6 +778,9 @@ class PlayerScript : public ScriptObject
     public:
         virtual void OnPlayerReleasedGhost(Player* /*player*/) { }
 
+        // Called when a player completes a quest
+        virtual void OnPlayerCompleteQuest(Player* /*player*/, Quest const* /*quest_id*/) { }
+
         // Called when a player kills another player
         virtual void OnPVPKill(Player* /*killer*/, Player* /*killed*/) { }
 
