@@ -1331,6 +1331,7 @@ class ScriptMgr
         void OnAfterUpdateAttackPowerAndDamage(Player* player, float& level, float& base_attPower, float& attPowerMod, float& attPowerMultiplier, bool ranged);
         void OnBeforeInitTalentForLevel(Player* player, uint8& level, uint32& talentPointsForLevel);
         void OnFirstLogin(Player* player);
+        void OnPlayerCompleteQuest(Player* player, Quest const* quest);
 
     public: /* GuildScript */
 
