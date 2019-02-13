@@ -66,6 +66,9 @@ public:
         // Kologarn
         uint64 m_kologarnDoorsGUID;
 
+        // Hodir
+        uint64 m_hodirDoorsGUID;
+
         // Thorim
         uint64 m_thorimGameobjectsGUID[5];
 
@@ -144,6 +147,9 @@ public:
 
             // Thorim
             memset(&m_thorimGameobjectsGUID, 0, sizeof(m_thorimGameobjectsGUID));
+
+            // Hodir
+            m_hodirDoorsGUID        = 0;
 
             // Mimiron
             memset(&m_MimironDoor, 0, sizeof(m_MimironDoor));
@@ -459,6 +465,12 @@ public:
                 case GO_KOLOGARN_DOORS:
                     m_kologarnDoorsGUID = gameObject->GetGUID();
                     break;    
+
+                // Hodir
+                case GO_HODIR_ENTRENCE:
+                    m_hodirDoorsGUID = gameObject->GetGUID();
+                    break;
+
                 // Thorim
                 case GO_ARENA_LEVER_GATE:
                     m_thorimGameobjectsGUID[DATA_THORIM_LEVER_GATE-DATA_THORIM_LEVER_GATE] = gameObject->GetGUID();
@@ -605,6 +617,8 @@ public:
                     break;
                 case TYPE_MIMIRON:
                 case TYPE_HODIR:
+                      if (GameObject* go = instance->GetGameObject(m_hodirDoorsGUID))
+                        go->SetGoState(data == IN_PROGRESS ? GO_STATE_READY : GO_STATE_ACTIVE);
                 case TYPE_THORIM:
                 case TYPE_FREYA:
                     m_auiEncounter[type] = data;

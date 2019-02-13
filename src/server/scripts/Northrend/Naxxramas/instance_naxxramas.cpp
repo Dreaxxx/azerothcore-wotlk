@@ -57,6 +57,7 @@ public:
             _patchwerkGateGUID = 0;
             _gluthGateGUID = 0;
             _nothGateGUID = 0;
+            _nothEntrenceGateGUID = 0;
             _heiganGateGUID = 0;
             _heiganGateExitGUID = 0;
             _loathebGateGUID = 0;
@@ -108,6 +109,7 @@ public:
         uint64 _patchwerkGateGUID;
         uint64 _gluthGateGUID;
         uint64 _nothGateGUID;
+        uint64 _nothEntrenceGateGUID;
         uint64 _heiganGateGUID;
         uint64 _heiganGateExitGUID;
         uint64 _loathebGateGUID;
@@ -261,6 +263,9 @@ public:
                     _nothGateGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_NOTH) == DONE)
                         pGo->SetGoState(GO_STATE_ACTIVE);
+                    break;
+                case GO_NOTH_ENTRENCE:
+                    _nothEntrenceGateGUID = pGo->GetGUID();
                     break;
                 case GO_HEIGAN_ENTERANCE_GATE:
                     _heiganGateGUID = pGo->GetGUID();
@@ -590,6 +595,8 @@ public:
                             go->SetGoState(GO_STATE_ACTIVE);
                         if (GameObject* go = instance->GetGameObject(_heiganGateGUID))
                             go->SetGoState(GO_STATE_ACTIVE);
+                        if (GameObject* go = instance->GetGameObject(_nothEntrenceGateGUID))
+                            go->SetGoState(data == IN_PROGRESS ? GO_STATE_READY : GO_STATE_ACTIVE);
                         break;
                     case BOSS_HEIGAN:
                         if (GameObject* go = instance->GetGameObject(_heiganGateGUID))
@@ -636,6 +643,8 @@ public:
                     case BOSS_THADDIUS:
                         if (GameObject* go = instance->GetGameObject(_thaddiusPortalGUID))
                             go->SetPhaseMask(1, true);
+                        if (GameObject* go = instance->GetGameObject(_thaddiusGateGUID))
+                            go->SetGoState(data == IN_PROGRESS ? GO_STATE_READY : GO_STATE_ACTIVE);
                         break;
                     case BOSS_HORSEMAN:
                         if (GameObject* go = instance->GetGameObject(_horsemanPortalGUID))

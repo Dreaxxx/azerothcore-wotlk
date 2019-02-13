@@ -57,6 +57,7 @@ enum NXGOs
     GO_PATCHWERK_GATE               = 181123,
     GO_GLUTH_GATE                   = 181120,
     GO_NOTH_GATE                    = 181201,
+    GO_NOTH_ENTRENCE                = 181200,
     GO_HEIGAN_ENTERANCE_GATE        = 181202,
     GO_HEIGAN_EXIT_GATE             = 181203,
     GO_LOATHEB_GATE                 = 181241,
