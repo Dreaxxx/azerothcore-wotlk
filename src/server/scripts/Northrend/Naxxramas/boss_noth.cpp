@@ -5,11 +5,6 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
-#include "instance_naxxramas.cpp"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
-#include "CellImpl.h"
-#include "PassiveAI.h" 
 
 enum Says
 {
@@ -136,7 +131,7 @@ public:
             events.SetPhase(0);
             if (pInstance)
             {
-                if (GameObject* go = instance->GetGameObject(_nothEntrenceGateGUID))
+                if (GameObject* go = me->GetMap()->GetGameObject(_nothEntrenceGateGUID))
                     go->SetGoState(GO_STATE_ACTIVE);
             }
         }
@@ -154,7 +149,7 @@ public:
             StartGroundPhase();
             if (pInstance)
             {
-                 if (GameObject* go = instance->GetGameObject(_nothEntrenceGateGUID))
+                 if (GameObject* go = me->GetMap()->GetGameObject(_nothEntrenceGateGUID))
                     go->SetGoState(GO_STATE_READY);
             }
         }

@@ -7,11 +7,6 @@
 #include "naxxramas.h"
 #include "SpellScript.h"
 #include "Player.h"
-#include "instance_naxxramas.cpp"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
-#include "CellImpl.h"
-#include "PassiveAI.h" 
 
 enum Says
 {
@@ -173,7 +168,7 @@ public:
             }
             if (pInstance)
             {
-                if (GameObject* go = instance->GetGameObject(_thaddiusGateGUID))
+                if (GameObject* go = me->GetMap()->GetGameObject(_thaddiusGateGUID))
                     go->SetGoState(GO_STATE_ACTIVE);
             }
         }
@@ -211,7 +206,7 @@ public:
             summons.DoZoneInCombat(NPC_STALAGG);
             if (pInstance)
             {
-                 if (GameObject* go = instance->GetGameObject(_thaddiusGateGUID))
+                 if (GameObject* go = me->GetMap()->GetGameObject(_thaddiusGateGUID))
                     go->SetGoState(GO_STATE_READY);
             }
         }
