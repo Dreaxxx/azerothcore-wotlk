@@ -7,11 +7,6 @@
 #include "naxxramas.h"
 #include "SpellScript.h"
 #include "Player.h"
-#include "instance_naxxramas.cpp"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
-#include "CellImpl.h"
-#include "PassiveAI.h" 
 
 enum Says
 {
@@ -171,11 +166,6 @@ public:
                 cr->CastSpell(cr, SPELL_STALAGG_CHAIN, false);
                 cr->SetDisableGravity(true);
             }
-            if (pInstance)
-            {
-                if (GameObject* go = me->GetMap()->GetGameObject(_thaddiusGateGUID))
-                    go->SetGoState(GO_STATE_ACTIVE);
-            }
         }
 
         void KilledUnit(Unit* who)
@@ -209,11 +199,6 @@ public:
             me->SetInCombatWithZone();
             summons.DoZoneInCombat(NPC_FEUGEN);
             summons.DoZoneInCombat(NPC_STALAGG);
-            if (pInstance)
-            {
-                 if (GameObject* go = me->GetMap()->GetGameObject(_thaddiusGateGUID))
-                    go->SetGoState(GO_STATE_READY);
-            }
         }
 
         void UpdateAI(uint32 diff)

@@ -266,6 +266,10 @@ public:
                     break;
                 case GO_NOTH_ENTRENCE:
                     _nothEntrenceGateGUID = pGo->GetGUID();
+                    if (GetBossState(BOSS_NOTH) == IN_PROGRESS)
+                        pGo->SetGoState(GO_STATE_READY);
+                    else
+                        pGo->SetGoState(GO_STATE_ACTIVE);
                     break;
                 case GO_HEIGAN_ENTERANCE_GATE:
                     _heiganGateGUID = pGo->GetGUID();
@@ -304,7 +308,11 @@ public:
                     break;
                 case GO_THADDIUS_GATE:
                     _thaddiusGateGUID = pGo->GetGUID();
-                    if (GetBossState(BOSS_GLUTH) == DONE) // gluth is correct
+                    if (GetBossState(BOSS_GLUTH) != DONE) // gluth is correct
+                        pGo->SetGoState(GO_STATE_READY);
+                    else if (GetBossState(BOSS_THADDIUS) == IN_PROGRESS)
+                        pGo->SetGoState(GO_STATE_READY);
+                    else
                         pGo->SetGoState(GO_STATE_ACTIVE);
                     break;
                 case GO_GOTHIK_ENTER_GATE:

@@ -5,11 +5,6 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
-#include "instance_naxxramas.cpp"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
-#include "CellImpl.h"
-#include "PassiveAI.h" 
 
 enum Says
 {
@@ -134,11 +129,6 @@ public:
             me->SetControlled(false, UNIT_STATE_ROOT);
             me->SetReactState(REACT_AGGRESSIVE);
             events.SetPhase(0);
-            if (pInstance)
-            {
-                if (GameObject* go = me->GetMap()->GetGameObject(_nothEntrenceGateGUID))
-                    go->SetGoState(GO_STATE_ACTIVE);
-            }
         }
 
         void EnterEvadeMode()
@@ -152,11 +142,6 @@ public:
             BossAI::EnterCombat(who);
             Talk(SAY_AGGRO);
             StartGroundPhase();
-            if (pInstance)
-            {
-                 if (GameObject* go = me->GetMap()->GetGameObject(_nothEntrenceGateGUID))
-                    go->SetGoState(GO_STATE_READY);
-            }
         }
 
         void JustSummoned(Creature *summon)
