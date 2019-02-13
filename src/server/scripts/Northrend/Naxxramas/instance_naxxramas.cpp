@@ -595,8 +595,6 @@ public:
                             go->SetGoState(GO_STATE_ACTIVE);
                         if (GameObject* go = instance->GetGameObject(_heiganGateGUID))
                             go->SetGoState(GO_STATE_ACTIVE);
-                        if (GameObject* go = instance->GetGameObject(_nothEntrenceGateGUID))
-                            go->SetGoState(data == IN_PROGRESS ? GO_STATE_READY : GO_STATE_ACTIVE);
                         break;
                     case BOSS_HEIGAN:
                         if (GameObject* go = instance->GetGameObject(_heiganGateGUID))
@@ -643,8 +641,6 @@ public:
                     case BOSS_THADDIUS:
                         if (GameObject* go = instance->GetGameObject(_thaddiusPortalGUID))
                             go->SetPhaseMask(1, true);
-                        if (GameObject* go = instance->GetGameObject(_thaddiusGateGUID))
-                            go->SetGoState(data == IN_PROGRESS ? GO_STATE_READY : GO_STATE_ACTIVE);
                         break;
                     case BOSS_HORSEMAN:
                         if (GameObject* go = instance->GetGameObject(_horsemanPortalGUID))

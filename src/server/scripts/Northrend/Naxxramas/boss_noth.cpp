@@ -129,6 +129,11 @@ public:
             me->SetControlled(false, UNIT_STATE_ROOT);
             me->SetReactState(REACT_AGGRESSIVE);
             events.SetPhase(0);
+            if (pInstance)
+            {
+                if (GameObject* go = instance->GetGameObject(_nothEntrenceGateGUID))
+                    go->SetGoState(GO_STATE_ACTIVE);
+            }
         }
 
         void EnterEvadeMode()
@@ -142,6 +147,11 @@ public:
             BossAI::EnterCombat(who);
             Talk(SAY_AGGRO);
             StartGroundPhase();
+            if (pInstance)
+            {
+                 if (GameObject* go = instance->GetGameObject(_nothEntrenceGateGUID))
+                    go->SetGoState(GO_STATE_READY);
+            }
         }
 
         void JustSummoned(Creature *summon)

@@ -166,6 +166,11 @@ public:
                 cr->CastSpell(cr, SPELL_STALAGG_CHAIN, false);
                 cr->SetDisableGravity(true);
             }
+            if (pInstance)
+            {
+                if (GameObject* go = instance->GetGameObject(_thaddiusGateGUID))
+                    go->SetGoState(GO_STATE_ACTIVE);
+            }
         }
 
         void KilledUnit(Unit* who)
@@ -199,6 +204,11 @@ public:
             me->SetInCombatWithZone();
             summons.DoZoneInCombat(NPC_FEUGEN);
             summons.DoZoneInCombat(NPC_STALAGG);
+            if (pInstance)
+            {
+                 if (GameObject* go = instance->GetGameObject(_thaddiusGateGUID))
+                    go->SetGoState(GO_STATE_READY);
+            }
         }
 
         void UpdateAI(uint32 diff)
