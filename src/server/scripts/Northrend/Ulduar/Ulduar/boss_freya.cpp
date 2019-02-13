@@ -640,7 +640,8 @@ public:
                 events.RepeatEvent(45000+urand(0,10000));
                 break;
             case EVENT_FREYA_UNSTABLE_SUN_BEAM:
-                if (Creature* cr = me->SummonCreature(NPC_FREYA_UNSTABLE_SUN_BEAM, me->SelectTarget(SELECT_TARGET_RANDOM, 0), 0, TEMPSUMMON_TIMED_DESPAWN, 10000))
+                Position pos;
+                if (Creature* cr = me->SummonCreature(NPC_FREYA_UNSTABLE_SUN_BEAM, pos, TEMPSUMMON_TIMED_DESPAWN, 10000))
                 {
                     cr->CastSpell(cr, SPELL_UNSTABLE_SUN_VISUAL, true);
                     cr->CastSpell(cr, SPELL_UNSTABLE_SUN_FREYA_DAMAGE, true);
