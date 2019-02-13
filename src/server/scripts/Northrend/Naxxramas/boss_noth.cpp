@@ -5,6 +5,11 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
+#include "instance_naxxramas.cpp"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "CellImpl.h"
+#include "PassiveAI.h" 
 
 enum Says
 {
