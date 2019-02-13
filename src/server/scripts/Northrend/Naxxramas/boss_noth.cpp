@@ -5,6 +5,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
+#include "instance_naxxramas.cpp"
 
 enum Says
 {

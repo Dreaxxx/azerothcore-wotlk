@@ -7,6 +7,7 @@
 #include "naxxramas.h"
 #include "SpellScript.h"
 #include "Player.h"
+#include "instance_naxxramas.cpp" 
 
 enum Says
 {
