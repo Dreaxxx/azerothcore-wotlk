@@ -1004,7 +1004,7 @@ public:
             }
         }
 
-        void UpdateAI(uint32 diff)
+        void UpdateAI(uint32 diff) override
         {
             if (_timeToHit)
             {
@@ -1241,7 +1241,7 @@ public:
         return true;
     }
 
-    CreatureAI* GetAI(Creature* pCreature) const
+    CreatureAI* GetAI(Creature* pCreature) const override
     {
         return new npc_lore_keeper_of_norgannon_ulduarAI (pCreature);
     }
