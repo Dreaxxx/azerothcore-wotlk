@@ -247,8 +247,7 @@ public:
         void EnterCombat(Unit*) override
         {
             ScheduleEvents();
-            me->MonsterYell("Hostile entities detected. Threat assessment protocol active. Primary target engaged. Time minus thirty seconds to re-evaluation.", LANG_UNIVERSAL, 0);
-            me->PlayDirectSound(LV_SOUND_AGGRO);
+            Talk(FLAME_LEVIATHAN_SAY_AGGRO);
 
             me->setActive(true);
             me->SetHomePosition(322.4f, -14.3f, 409.8f, 3.23f);
