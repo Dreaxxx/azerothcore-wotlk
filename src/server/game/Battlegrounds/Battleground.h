@@ -31,7 +31,7 @@ class BattlegroundRV;
 class BattlegroundIC;
 
 struct PvPDifficultyEntry;
-struct WorldSafeLocsEntry;
+struct GraveyardStruct;
 
 enum BattlegroundDesertionType
 {
@@ -396,7 +396,12 @@ class Battleground
         void SetMaxPlayersPerTeam(uint32 MaxPlayers) { m_MaxPlayersPerTeam = MaxPlayers; }
         void SetMinPlayersPerTeam(uint32 MinPlayers) { m_MinPlayersPerTeam = MinPlayers; }
 
-        void DecreaseInvitedCount(TeamId teamId)    { ASSERT(m_BgInvitedPlayers[teamId] > 0); --m_BgInvitedPlayers[teamId]; }
+        void DecreaseInvitedCount(TeamId teamId)
+        {
+            if (m_BgInvitedPlayers[teamId] > 0)
+                --m_BgInvitedPlayers[teamId]; 
+        }
+
         void IncreaseInvitedCount(TeamId teamId)    { ++m_BgInvitedPlayers[teamId]; }
         uint32 GetInvitedCount(TeamId teamId) const { return m_BgInvitedPlayers[teamId]; }
 
@@ -480,7 +485,7 @@ class Battleground
         void CastSpellOnTeam(uint32 spellId, TeamId teamId);
         void RemoveAuraOnTeam(uint32 spellId, TeamId teamId);
         void RewardHonorToTeam(uint32 honor, TeamId teamId);
-        void RewardReputationToTeam(uint32 factionId, uint32 reputation, TeamId teamId);
+        void RewardReputationToTeam(uint32 a_faction_id, uint32 h_faction_id, uint32 Reputation, uint32 TeamID);
         uint32 GetRealRepFactionForPlayer(uint32 factionId, Player* player);
 
         void UpdateWorldState(uint32 Field, uint32 Value);
@@ -488,12 +493,12 @@ class Battleground
         void EndBattleground(TeamId winnerTeamId);
         void BlockMovement(Player* player);
 
-        void SendWarningToAll(int32 entry, ...);
-        void SendMessageToAll(int32 entry, ChatMsg type, Player const* source = NULL);
-        void PSendMessageToAll(int32 entry, ChatMsg type, Player const* source, ...);
+        void SendWarningToAll(uint32 entry, ...);
+        void SendMessageToAll(uint32 entry, ChatMsg type, Player const* source = NULL);
+        void PSendMessageToAll(uint32 entry, ChatMsg type, Player const* source, ...);
 
         // specialized version with 2 string id args
-        void SendMessage2ToAll(int32 entry, ChatMsg type, Player const* source, int32 strId1 = 0, int32 strId2 = 0);
+        void SendMessage2ToAll(uint32 entry, ChatMsg type, Player const* source, uint32 strId1 = 0, uint32 strId2 = 0);
 
         // Raid Group
         Group* GetBgRaid(TeamId teamId) const { return m_BgRaids[teamId]; }
@@ -541,7 +546,7 @@ class Battleground
         virtual void HandlePlayerResurrect(Player* /*player*/) {}
 
         // Death related
-        virtual WorldSafeLocsEntry const* GetClosestGraveyard(Player* player);
+        virtual GraveyardStruct const* GetClosestGraveyard(Player* player);
 
         virtual void AddPlayer(Player* player);                // must be implemented in BG subclass
 

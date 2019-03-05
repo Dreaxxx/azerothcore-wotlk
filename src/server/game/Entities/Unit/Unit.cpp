@@ -141,9 +141,9 @@ void DamageInfo::BlockDamage(uint32 amount)
     m_damage -= amount;
 }
 
-ProcEventInfo::ProcEventInfo(Unit* actor, Unit* actionTarget, Unit* procTarget, uint32 typeMask, uint32 spellTypeMask, uint32 spellPhaseMask, uint32 hitMask, Spell* /*spell*/, DamageInfo* damageInfo, HealInfo* healInfo, SpellInfo const* triggeredByAuraSpell)
+ProcEventInfo::ProcEventInfo(Unit* actor, Unit* actionTarget, Unit* procTarget, uint32 typeMask, uint32 spellTypeMask, uint32 spellPhaseMask, uint32 hitMask, Spell* spell, DamageInfo* damageInfo, HealInfo* healInfo, SpellInfo const* triggeredByAuraSpell)
 :_actor(actor), _actionTarget(actionTarget), _procTarget(procTarget), _typeMask(typeMask), _spellTypeMask(spellTypeMask), _spellPhaseMask(spellPhaseMask),
-_hitMask(hitMask), _damageInfo(damageInfo), _healInfo(healInfo), _triggeredByAuraSpell(triggeredByAuraSpell)
+_hitMask(hitMask), _spell(spell), _damageInfo(damageInfo), _healInfo(healInfo), _triggeredByAuraSpell(triggeredByAuraSpell)
 {
 }
 
@@ -178,6 +178,7 @@ i_motionMaster(new MotionMaster(this)), m_regenTimer(0), m_ThreatManager(this), 
     m_rootTimes = 0;
 
     m_state = 0;
+    m_petCatchUp = false;
     m_deathState = ALIVE;
 
     for (uint8 i = 0; i < CURRENT_MAX_SPELL; ++i)
@@ -13093,8 +13094,40 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced)
                 Unit* pOwner = GetCharmerOrOwner();
                 if (pOwner && !IsInCombat() && !IsVehicle() && !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED) && (IsPet() || IsGuardian() || GetGUID() == pOwner->GetCritterGUID() || GetCharmerGUID() == pOwner->GetGUID()))
                 {
-                    if (speed < pOwner->GetSpeedRate(mtype)+0.1f)
-                        speed = pOwner->GetSpeedRate(mtype)+0.1f; // pets derive speed from owner when not in combat
+                    if (pOwner->GetTypeId() != TYPEID_PLAYER)
+                    {
+                        if (speed < pOwner->GetSpeedRate(mtype)+0.1f)
+                            speed = pOwner->GetSpeedRate(mtype)+0.1f; // pets derive speed from owner when not in combat
+                    }
+                    else
+                    {
+                        // special treatment for player pets in order to avoid stuttering
+                        float ownerSpeed = pOwner->GetSpeedRate(mtype);
+                        float distOwner = GetDistance(pOwner);
+                        float minDist = 2.5f;
+
+                        if (ToCreature()->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
+                        {
+                            // different minimum distance for vanity pets
+                            minDist = 5.0f;
+
+                            if (mtype == MOVE_FLIGHT)
+                                mtype = MOVE_RUN; // vanity pets use run speed for flight
+                        }
+
+                        float maxDist = ownerSpeed >= 1.0f ? minDist * ownerSpeed * 1.5f : minDist * 1.5f;
+
+                        if (distOwner < minDist && m_petCatchUp)
+                            m_petCatchUp = false;
+
+                        if (distOwner > maxDist && !m_petCatchUp)
+                            m_petCatchUp = true;
+
+                        if (m_petCatchUp)
+                            speed = ownerSpeed * 1.05f;
+                        else
+                            speed = ownerSpeed * 0.95f;
+                    }
                 }
                 else
                     speed *= ToCreature()->GetCreatureTemplate()->speed_run;    // at this point, MOVE_WALK is never reached
@@ -19430,19 +19463,6 @@ void Unit::BuildCooldownPacket(WorldPacket& data, uint8 flags, PacketCooldowns c
         data << uint32(itr->first);
         data << uint32(itr->second);
     }
-}
-
-uint8 Unit::getRace(bool original) const
-{
-    if (GetTypeId() == TYPEID_PLAYER)
-    {
-        if (original)
-            return m_realRace;
-        else
-            return m_race;
-    }
-
-    return GetByteValue(UNIT_FIELD_BYTES_0, 0);
 }
 
 void Unit::setRace(uint8 race)

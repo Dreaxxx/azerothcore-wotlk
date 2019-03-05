@@ -50,7 +50,7 @@ class npc_pet_gen_mojo : public CreatureScript
                 me->HandleEmoteCommand(emote);
                 Unit* owner = me->GetOwner();
                 if (emote != TEXT_EMOTE_KISS || !owner || owner->GetTypeId() != TYPEID_PLAYER ||
-                    owner->ToPlayer()->GetTeamId(true) != player->GetTeamId(true))
+                    owner->ToPlayer()->GetTeamId() != player->GetTeamId())
                 {
                     return;
                 }
@@ -245,13 +245,13 @@ public:
                     {
                         _state = ARGENT_PONY_STATE_ENCH;
 
-                        aura = (player->GetTeamId(true) == TEAM_ALLIANCE ? SPELL_AURA_TIRED_S : SPELL_AURA_TIRED_G);
+                        aura = (player->GetTeamId() == TEAM_ALLIANCE ? SPELL_AURA_TIRED_S : SPELL_AURA_TIRED_G);
                         duration = player->GetSpellCooldownDelay(aura);
                         me->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
                         for (uint8 i = 0; i < 3; ++i)
                         {
-                            if (player->GetTeamId(true) == TEAM_ALLIANCE)
+                            if (player->GetTeamId() == TEAM_ALLIANCE)
                             {
                                 if (uint32 cooldown = player->GetSpellCooldownDelay(SPELL_AURA_POSTMAN_S+i))
                                 {
@@ -276,7 +276,7 @@ public:
                         }
 
                         // Generate Banners
-                        uint32 mask = player->GetTeamId(true) ? RACEMASK_HORDE : RACEMASK_ALLIANCE;
+                        uint32 mask = player->GetTeamId() ? RACEMASK_HORDE : RACEMASK_ALLIANCE;
                         for (uint8 i = 1; i < MAX_RACES; ++i)
                             if (mask & (1 << (i-1)) && player->HasAchieved(argentBanners[i].achievement))
                                 _banners[i] = true;
@@ -341,7 +341,7 @@ public:
         if (player->GetGUID() != creature->GetOwnerGUID())
             return true;
 
-        if (!creature->HasAura(player->GetTeamId(true) ? SPELL_AURA_TIRED_G : SPELL_AURA_TIRED_S))
+        if (!creature->HasAura(player->GetTeamId() ? SPELL_AURA_TIRED_G : SPELL_AURA_TIRED_S))
         {
             uint8 _state = creature->AI()->GetData(0 /*GET_DATA_STATE*/);
             if (_state == ARGENT_PONY_STATE_ENCH || _state == ARGENT_PONY_STATE_VENDOR)
@@ -369,20 +369,20 @@ public:
             case GOSSIP_ACTION_TRADE:
                 creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_VENDOR);
                 player->GetSession()->SendListInventory(creature->GetGUID());
-                spellId = player->GetTeamId(true) ? SPELL_AURA_SHOP_G : SPELL_AURA_SHOP_S;
+                spellId = player->GetTeamId() ? SPELL_AURA_SHOP_G : SPELL_AURA_SHOP_S;
                 creature->AI()->DoAction(ARGENT_PONY_STATE_VENDOR);
                 break;
             case GOSSIP_ACTION_BANK:
                 creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_BANKER);
                 player->GetSession()->SendShowBank(player->GetGUID());
-                spellId = player->GetTeamId(true) ? SPELL_AURA_BANK_G : SPELL_AURA_BANK_S;
+                spellId = player->GetTeamId() ? SPELL_AURA_BANK_G : SPELL_AURA_BANK_S;
                 creature->AI()->DoAction(ARGENT_PONY_STATE_BANK);
                 break;
             case GOSSIP_ACTION_MAILBOX:
             {
                 creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP|UNIT_NPC_FLAG_MAILBOX);
                 player->GetSession()->SendShowMailBox(creature->GetGUID());
-                spellId = player->GetTeamId(true) ? SPELL_AURA_POSTMAN_G : SPELL_AURA_POSTMAN_S;
+                spellId = player->GetTeamId() ? SPELL_AURA_POSTMAN_G : SPELL_AURA_POSTMAN_S;
                 creature->AI()->DoAction(ARGENT_PONY_STATE_MAILBOX);
                 break;
             }
@@ -399,7 +399,7 @@ public:
         {
             creature->CastSpell(creature, spellId, true);
             player->AddSpellCooldown(spellId, 0, 3*MINUTE*IN_MILLISECONDS);
-            player->AddSpellCooldown(player->GetTeamId(true) ? SPELL_AURA_TIRED_G : SPELL_AURA_TIRED_S, 0, 3*MINUTE*IN_MILLISECONDS + 4*HOUR*IN_MILLISECONDS);
+            player->AddSpellCooldown(player->GetTeamId() ? SPELL_AURA_TIRED_G : SPELL_AURA_TIRED_S, 0, 3*MINUTE*IN_MILLISECONDS + 4*HOUR*IN_MILLISECONDS);
             creature->DespawnOrUnsummon(3*MINUTE*IN_MILLISECONDS);
         }
         return true;
@@ -704,7 +704,6 @@ public:
     {
         npc_pet_gen_wind_rider_cubAI(Creature *c) : NullCreatureAI(c)
         {
-            allowMove = true;
             isFlying = true;
             checkTimer = 0;
             checkTimer2 = 2000;
@@ -712,15 +711,8 @@ public:
         }
 
         bool isFlying;
-        bool allowMove;
         uint32 checkTimer;
         uint32 checkTimer2;
-
-        void MovementInform(uint32 type, uint32 id)
-        {
-            if (type == POINT_MOTION_TYPE && id == 1)
-                allowMove = true;
-        }
 
         void UpdateAI(uint32 diff)
         {
@@ -730,7 +722,7 @@ public:
                 checkTimer2 = 0;
                 if (Unit* owner = me->GetOwner())
                 {
-                    if (owner->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
+                    if (owner->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) || owner->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_SPEED))
                     {
                         isFlying = true;
                         me->SetCanFly(true);
@@ -743,24 +735,6 @@ public:
                         me->SetDisableGravity(false);
                         me->GetMotionMaster()->MoveFall();
                     }
-                }
-            }
-
-            checkTimer += diff;
-            if (allowMove || checkTimer > 2000)
-            {
-                allowMove = false;
-                checkTimer = 0;
-                if (Unit* owner = me->GetOwner())
-                {
-                    if (me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) == POINT_MOTION_TYPE ||
-                        me->GetDistance(owner) < 1.0f)
-                        return;
-                    float x, y, z;
-                    owner->GetNearPoint2D(x, y, 0.5f, owner->GetOrientation()+PET_FOLLOW_ANGLE);
-                    z = owner->GetPositionZ() + (isFlying ? 2.5f : 0.0f);
-
-                    me->GetMotionMaster()->MovePoint(1, x, y, z);
                 }
             }
         }
@@ -956,6 +930,27 @@ public:
     }
 };
 
+class npc_pet_gen_moth : public CreatureScript
+{
+public:
+    npc_pet_gen_moth() : CreatureScript("npc_pet_gen_moth") { }
+
+    struct npc_pet_gen_mothAI : public NullCreatureAI
+    {
+        npc_pet_gen_mothAI(Creature *c) : NullCreatureAI(c)
+        {
+            me->AddUnitState(UNIT_STATE_NO_ENVIRONMENT_UPD);
+            me->SetCanFly(true);
+            me->SetDisableGravity(true);
+        }
+    };
+
+    CreatureAI* GetAI(Creature* pCreature) const
+    {
+        return new npc_pet_gen_mothAI (pCreature);
+    }
+};
+
 void AddSC_generic_pet_scripts()
 {
     new npc_pet_gen_mojo();
@@ -970,4 +965,5 @@ void AddSC_generic_pet_scripts()
     new npc_pet_gen_plump_turkey();
     new npc_pet_gen_toxic_wasteling();
     new npc_pet_gen_fetch_ball();
+    new npc_pet_gen_moth();
 }

@@ -938,6 +938,7 @@ private:
     uint32 _spellPhaseMask;
     uint32 _hitMask;
     uint32 _cooldown;
+    Spell* _spell;
     DamageInfo* _damageInfo;
     HealInfo* _healInfo;
     SpellInfo const* const _triggeredByAuraSpell;
@@ -1460,9 +1461,11 @@ class Unit : public WorldObject
         uint8 getLevel() const { return uint8(GetUInt32Value(UNIT_FIELD_LEVEL)); }
         uint8 getLevelForTarget(WorldObject const* /*target*/) const { return getLevel(); }
         void SetLevel(uint8 lvl, bool showLevelChange = true);
-        uint8 getRace(bool original = false) const;
+        uint8 getRace(bool forceoriginal = false) const;
         void setRace(uint8 race);
+        uint8 getCFSRace() { return getRace(true); }
         uint32 getRaceMask() const { return 1 << (getRace(true)-1); }
+        uint32 getCFSRaceMask() const { return 1 << (getRace(true) - 1); }
         uint8 getClass() const { return GetByteValue(UNIT_FIELD_BYTES_0, 1); }
         uint32 getClassMask() const { return 1 << (getClass()-1); }
         uint8 getGender() const { return GetByteValue(UNIT_FIELD_BYTES_0, 2); }
@@ -2560,6 +2563,7 @@ class Unit : public WorldObject
         bool m_duringRemoveFromWorld; // lock made to not add stuff after begining removing from world
 
         uint32 _oldFactionId;           ///< faction before charm
+        bool m_petCatchUp;
 };
 
 namespace Trinity

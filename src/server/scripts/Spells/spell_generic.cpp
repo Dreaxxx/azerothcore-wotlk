@@ -2200,7 +2200,7 @@ class spell_pvp_trinket_wotf_shared_cd : public SpellScriptLoader
                 // Spell::SendSpellCooldown() skips all spells with TRIGGERED_IGNORE_SPELL_AND_CATEGORY_CD
                 player->AddSpellAndCategoryCooldowns(GetSpellInfo(), GetCastItem() ? GetCastItem()->GetEntry() : 0, GetSpell());
 
-                if (player->GetTeamId(true) == TEAM_HORDE) {
+                if (player->GetTeamId() == TEAM_HORDE) {
                     if (GetSpellInfo()->Id == SPELL_WILL_OF_THE_FORSAKEN_COOLDOWN_TRIGGER)
                     {
                         WorldPacket data;
@@ -4161,51 +4161,51 @@ class spell_gen_bandage : public SpellScriptLoader
 // Blade Warding - 64440
 enum BladeWarding
 {
-	SPELL_GEN_BLADE_WARDING_TRIGGERED = 64442
+    SPELL_GEN_BLADE_WARDING_TRIGGERED = 64442
 };
 
 class spell_gen_blade_warding : public SpellScriptLoader
 {
 public:
-	spell_gen_blade_warding() : SpellScriptLoader("spell_gen_blade_warding") { }
+    spell_gen_blade_warding() : SpellScriptLoader("spell_gen_blade_warding") { }
 
-	class spell_gen_blade_warding_AuraScript : public AuraScript
-	{
-		PrepareAuraScript(spell_gen_blade_warding_AuraScript);
+    class spell_gen_blade_warding_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_gen_blade_warding_AuraScript);
 
-		bool Validate(SpellInfo const* /*spellInfo*/)
-		{
-			if (!sSpellMgr->GetSpellInfo(SPELL_GEN_BLADE_WARDING_TRIGGERED))
-				return false;
-			return true;
-		}
+        bool Validate(SpellInfo const* /*spellInfo*/)
+        {
+            if (!sSpellMgr->GetSpellInfo(SPELL_GEN_BLADE_WARDING_TRIGGERED))
+                return false;
+            return true;
+        }
 
-		void HandleProc(AuraEffect const* aurEff, ProcEventInfo& eventInfo)
-		{
-			PreventDefaultAction();
+        void HandleProc(AuraEffect const* aurEff, ProcEventInfo& eventInfo)
+        {
+            PreventDefaultAction();
 
-			Unit* caster = eventInfo.GetActionTarget();
-			SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(SPELL_GEN_BLADE_WARDING_TRIGGERED);
+            Unit* caster = eventInfo.GetActionTarget();
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(SPELL_GEN_BLADE_WARDING_TRIGGERED);
 
-			uint8 stacks = GetStackAmount();
-			int32 bp = 0;
+            uint8 stacks = GetStackAmount();
+            int32 bp = 0;
 
-			for (uint8 i = 0; i < stacks; ++i)
-				bp += spellInfo->Effects[EFFECT_0].CalcValue(caster);
+            for (uint8 i = 0; i < stacks; ++i)
+                bp += spellInfo->Effects[EFFECT_0].CalcValue(caster);
 
-			caster->CastCustomSpell(SPELL_GEN_BLADE_WARDING_TRIGGERED, SPELLVALUE_BASE_POINT0, bp, eventInfo.GetActor(), TRIGGERED_FULL_MASK, nullptr, aurEff);
-		}
+            caster->CastCustomSpell(SPELL_GEN_BLADE_WARDING_TRIGGERED, SPELLVALUE_BASE_POINT0, bp, eventInfo.GetActor(), TRIGGERED_FULL_MASK, nullptr, aurEff);
+        }
 
-		void Register()
-		{
-			OnEffectProc += AuraEffectProcFn(spell_gen_blade_warding_AuraScript::HandleProc, EFFECT_1, SPELL_AURA_PROC_TRIGGER_SPELL);
-		}
-	};
+        void Register()
+        {
+            OnEffectProc += AuraEffectProcFn(spell_gen_blade_warding_AuraScript::HandleProc, EFFECT_1, SPELL_AURA_PROC_TRIGGER_SPELL);
+        }
+    };
 
-	AuraScript* GetAuraScript() const
-	{
-		return new spell_gen_blade_warding_AuraScript();
-	}
+    AuraScript* GetAuraScript() const
+    {
+        return new spell_gen_blade_warding_AuraScript();
+    }
 };
 
 enum GenericLifebloom

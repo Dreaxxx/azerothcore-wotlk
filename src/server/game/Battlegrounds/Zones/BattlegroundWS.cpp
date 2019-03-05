@@ -1,5 +1,8 @@
 /*
- * Originally written by Xinef - Copyright (C) 2016+ AzerothCore <www.azerothcore.org>, released under GNU AGPL v3 license: http://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
+ * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-GPL2
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * Originally written by Xinef
 */
 
 #include "BattlegroundWS.h"
@@ -12,6 +15,7 @@
 #include "Player.h"
 #include "World.h"
 #include "WorldPacket.h"
+#include "GameGraveyard.h"
 
 BattlegroundWS::BattlegroundWS()
 {
@@ -163,15 +167,15 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* player)
         player->RemoveAurasDueToSpell(BG_WS_SPELL_WARSONG_FLAG);
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_ALLIANCE);
         SendMessageToAll(LANG_BG_WS_CAPTURED_HF, CHAT_MSG_BG_SYSTEM_ALLIANCE, player);
-        RewardReputationToTeam(890, _reputationCapture, TEAM_ALLIANCE);
     }
     else
     {
         player->RemoveAurasDueToSpell(BG_WS_SPELL_SILVERWING_FLAG);
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_HORDE);
         SendMessageToAll(LANG_BG_WS_CAPTURED_AF, CHAT_MSG_BG_SYSTEM_HORDE, player);
-        RewardReputationToTeam(889, _reputationCapture, TEAM_HORDE);
     }
+    
+    RewardReputationToTeam(890, 889, _reputationCapture, player->GetTeamId());
 
     SpawnBGObject(BG_WS_OBJECT_H_FLAG, BG_WS_FLAG_RESPAWN_TIME);
     SpawnBGObject(BG_WS_OBJECT_A_FLAG, BG_WS_FLAG_RESPAWN_TIME);
@@ -401,10 +405,10 @@ bool BattlegroundWS::SetupBattleground()
     AddObject(BG_WS_OBJECT_DOOR_H_4, BG_OBJECT_DOOR_H_4_WS_ENTRY, 950.7952f, 1459.583f, 342.1523f, 0.05235988f, 0, 0, 0.02617695f, 0.9996573f, RESPAWN_IMMEDIATELY);
     
 
-    WorldSafeLocsEntry const* sg = sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_MAIN_ALLIANCE);
+    GraveyardStruct const* sg = sGraveyard->GetGraveyard(WS_GRAVEYARD_MAIN_ALLIANCE);
     AddSpiritGuide(WS_SPIRIT_MAIN_ALLIANCE, sg->x, sg->y, sg->z, 3.124139f, TEAM_ALLIANCE);
 
-    sg = sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_MAIN_HORDE);
+    sg = sGraveyard->GetGraveyard(WS_GRAVEYARD_MAIN_HORDE);
     AddSpiritGuide(WS_SPIRIT_MAIN_HORDE, sg->x, sg->y, sg->z, 3.193953f, TEAM_HORDE);
 
     for (uint32 i = BG_WS_OBJECT_DOOR_A_1; i < BG_WS_OBJECT_MAX; ++i)
@@ -495,12 +499,12 @@ void BattlegroundWS::UpdatePlayerScore(Player* player, uint32 type, uint32 value
     }
 }
 
-WorldSafeLocsEntry const* BattlegroundWS::GetClosestGraveyard(Player* player)
+GraveyardStruct const* BattlegroundWS::GetClosestGraveyard(Player* player)
 {
     if (GetStatus() == STATUS_IN_PROGRESS)
-        return sWorldSafeLocsStore.LookupEntry(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_MAIN_ALLIANCE : WS_GRAVEYARD_MAIN_HORDE);
+        return sGraveyard->GetGraveyard(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_MAIN_ALLIANCE : WS_GRAVEYARD_MAIN_HORDE);
     else
-        return sWorldSafeLocsStore.LookupEntry(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_FLAGROOM_ALLIANCE : WS_GRAVEYARD_FLAGROOM_HORDE);
+        return sGraveyard->GetGraveyard(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_FLAGROOM_ALLIANCE : WS_GRAVEYARD_FLAGROOM_HORDE);
 }
 
 void BattlegroundWS::FillInitialWorldStates(WorldPacket& data)

@@ -1085,6 +1085,48 @@ class Player : public Unit, public GridObject<Player>
         explicit Player(WorldSession* session);
         ~Player();
 
+    private:
+        bool m_ForgetBGPlayers;
+        bool m_ForgetInListPlayers;
+        uint8 m_FakeRace;
+        uint8 m_RealRace;
+        uint32 m_FakeMorph;
+
+   public:
+        TeamId m_team;
+        TeamId mFake_team;
+
+        typedef std::vector<uint64> FakePlayers;
+        void SendChatMessage(const char *format, ...);
+
+        void FitPlayerInTeam(bool action, Battleground* pBattleGround = NULL);
+        void DoForgetPlayersInList();
+        void DoForgetPlayersInBG(Battleground* pBattleGround);
+
+        uint8 getCFSRace() const { return m_RealRace; }
+        void SetCFSRace() { m_RealRace = GetByteValue(UNIT_FIELD_BYTES_0, 0); };
+        void SetFakeRace();
+        void SetFakeRaceAndMorph();
+
+        uint32 GetFakeMorph() { return m_FakeMorph; };
+        uint8 getFRace() const { return m_FakeRace; }
+
+        void SetForgetBGPlayers(bool value) { m_ForgetBGPlayers = value; }
+        bool ShouldForgetBGPlayers() { return m_ForgetBGPlayers; }
+        void SetForgetInListPlayers(bool value) { m_ForgetInListPlayers = value; }
+        bool ShouldForgetInListPlayers() { return m_ForgetInListPlayers; }
+        bool SendBattleGroundChat(uint32 msgtype, std::string message);
+        void MorphFit(bool value);
+        bool IsPlayingNative() const { return GetTeamId() == m_team; }
+
+        TeamId GetCFSTeamId() const { return m_team; }
+        TeamId GetTeamId() const { return mFake_team != TEAM_NEUTRAL ? mFake_team : (m_bgData.bgTeamId && GetBattleground() ? m_bgData.bgTeamId : m_team); }
+        TeamId GetBgTeamId() const { return m_bgData.bgTeamId != TEAM_NEUTRAL ? m_bgData.bgTeamId : GetTeamId(); }
+
+        bool SendRealNameQuery();
+        FakePlayers m_FakePlayers;
+        void SetBGTeamId(TeamId team) { m_bgData.bgTeamId = team; }
+
         void CleanupsBeforeDelete(bool finalCleanup = true);
 
         void AddToWorld();
@@ -1152,7 +1194,7 @@ class Player : public Unit, public GridObject<Player>
         PlayerSocial *GetSocial() { return m_social; }
 
         PlayerTaxi m_taxi;
-        void InitTaxiNodesForLevel() { m_taxi.InitTaxiNodesForLevel(getRace(), getClass(), getLevel()); }
+        void InitTaxiNodesForLevel() { m_taxi.InitTaxiNodesForLevel(getCFSRace(), getClass(), getLevel()); }
         bool ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc = NULL, uint32 spellid = 1);
         bool ActivateTaxiPathTo(uint32 taxi_path_id, uint32 spellid = 1);
         void CleanupAfterTaxiFlight();
@@ -1399,6 +1441,7 @@ class Player : public Unit, public GridObject<Player>
         bool CanRewardQuest(Quest const* quest, uint32 reward, bool msg);
         void AddQuestAndCheckCompletion(Quest const* quest, Object* questGiver);
         void AddQuest(Quest const* quest, Object* questGiver);
+        void AbandonQuest(uint32 quest_id);
         void CompleteQuest(uint32 quest_id);
         void IncompleteQuest(uint32 quest_id);
         void RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, bool announce = true);
@@ -1486,7 +1529,7 @@ class Player : public Unit, public GridObject<Player>
         void MoneyChanged(uint32 value);
         void ReputationChanged(FactionEntry const* factionEntry);
         void ReputationChanged2(FactionEntry const* factionEntry);
-        bool HasQuestForItem(uint32 itemid) const;
+        bool HasQuestForItem(uint32 itemId, uint32 excludeQuestId = 0, bool turnIn = false) const;
         bool HasQuestForGO(int32 GOId) const;
         void UpdateForQuestWorldObjects();
         bool CanShareQuest(uint32 quest_id) const;
@@ -2065,7 +2108,6 @@ class Player : public Unit, public GridObject<Player>
         void CheckAreaExploreAndOutdoor(void);
 
         static TeamId TeamIdForRace(uint8 race);
-        TeamId GetTeamId(bool original = false) const { return original ? TeamIdForRace(getRace(true)) : m_team; };
         void setFactionForRace(uint8 race);
         void setTeamId(TeamId teamid) { m_team = teamid; };
 
@@ -2256,8 +2298,6 @@ class Player : public Unit, public GridObject<Player>
                     return;
                 }
         }
-
-        TeamId GetBgTeamId() const { return m_bgData.bgTeamId != TEAM_NEUTRAL ? m_bgData.bgTeamId : GetTeamId(); }
 
         void LeaveBattleground(Battleground* bg = NULL);
         bool CanJoinToBattleground() const;
@@ -2721,7 +2761,6 @@ class Player : public Unit, public GridObject<Player>
         void outDebugValues() const;
         uint64 m_lootGuid;
 
-        TeamId m_team;
         uint32 m_nextSave; // pussywizard
         uint16 m_additionalSaveTimer; // pussywizard
         uint8 m_additionalSaveMask; // pussywizard
@@ -2942,8 +2981,8 @@ class Player : public Unit, public GridObject<Player>
         uint32 manaBeforeDuel;
 };
 
-void AddItemsSetItem(Player*player, Item* item);
-void RemoveItemsSetItem(Player*player, ItemTemplate const* proto);
+void AddItemsSetItem(Player* player, Item* item);
+void RemoveItemsSetItem(Player* player, ItemTemplate const* proto);
 
 // "the bodies of template functions must be made available in a header file"
 template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &basevalue, Spell* spell, bool temporaryPet)

@@ -15,6 +15,7 @@
 #include "SpellAuras.h"
 #include "GameEventMgr.h"
 #include "WorldSession.h"
+#include "GameGraveyard.h"
 
 BattlegroundAV::BattlegroundAV()
 {
@@ -79,7 +80,7 @@ void BattlegroundAV::HandleKillUnit(Creature* unit, Player* killer)
     if (entry == BG_AV_CreatureInfo[AV_NPC_A_BOSS])
     {
         CastSpellOnTeam(23658, TEAM_HORDE); //this is a spell which finishes a quest where a player has to kill the boss
-        RewardReputationToTeam(729, BG_AV_REP_BOSS, TEAM_HORDE);
+        RewardReputationToTeam(729, 730, BG_AV_REP_BOSS, killer->GetTeamId() == TEAM_ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE);
         RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_BOSS), TEAM_HORDE);
         EndBattleground(TEAM_HORDE);
         DelCreature(AV_CPLACE_TRIGGER17);
@@ -87,7 +88,7 @@ void BattlegroundAV::HandleKillUnit(Creature* unit, Player* killer)
     else if (entry == BG_AV_CreatureInfo[AV_NPC_H_BOSS])
     {
         CastSpellOnTeam(23658, TEAM_ALLIANCE); //this is a spell which finishes a quest where a player has to kill the boss
-        RewardReputationToTeam(730, BG_AV_REP_BOSS, TEAM_ALLIANCE);
+        RewardReputationToTeam(729, 730, BG_AV_REP_BOSS, killer->GetTeamId() == TEAM_ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE);
         RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_BOSS), TEAM_ALLIANCE);
         EndBattleground(TEAM_ALLIANCE);
         DelCreature(AV_CPLACE_TRIGGER19);
@@ -100,7 +101,7 @@ void BattlegroundAV::HandleKillUnit(Creature* unit, Player* killer)
             return;
         }
         m_CaptainAlive[0]=false;
-        RewardReputationToTeam(729, BG_AV_REP_CAPTAIN, TEAM_HORDE);
+        RewardReputationToTeam(729, 730, BG_AV_REP_CAPTAIN, killer->GetTeamId() == TEAM_ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE);
         RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_CAPTAIN), TEAM_HORDE);
         UpdateScore(TEAM_ALLIANCE, (-1)*BG_AV_RES_CAPTAIN);
         //spawn destroyed aura
@@ -119,7 +120,7 @@ void BattlegroundAV::HandleKillUnit(Creature* unit, Player* killer)
             return;
         }
         m_CaptainAlive[1]=false;
-        RewardReputationToTeam(730, BG_AV_REP_CAPTAIN, TEAM_ALLIANCE);
+        RewardReputationToTeam(729, 730, BG_AV_REP_CAPTAIN, killer->GetTeamId() == TEAM_ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE);
         RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_CAPTAIN), TEAM_ALLIANCE);
         UpdateScore(TEAM_HORDE, (-1)*BG_AV_RES_CAPTAIN);
         //spawn destroyed aura
@@ -141,6 +142,7 @@ void BattlegroundAV::HandleQuestComplete(uint32 questid, Player* player)
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;//maybe we should log this, cause this must be a cheater or a big bug
     TeamId teamId = player->GetTeamId();
+    uint8 CFSteamId = GetOtherTeamId(player->GetTeamId());
     //TODO add reputation, events (including quest not available anymore, next quest availabe, go/npc de/spawning)and maybe honor
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
     sLog->outDebug(LOG_FILTER_BATTLEGROUND, "BG_AV Quest %i completed", questid);
@@ -169,7 +171,7 @@ void BattlegroundAV::HandleQuestComplete(uint32 questid, Player* player)
         case AV_QUEST_A_COMMANDER1:
         case AV_QUEST_H_COMMANDER1:
             m_Team_QuestStatus[teamId][1]++;
-            RewardReputationToTeam(teamId, 1, teamId);
+            RewardReputationToTeam(teamId, CFSteamId, 1, teamId);
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
             if (m_Team_QuestStatus[teamId][1] == 30)
                 sLog->outDebug(LOG_FILTER_BATTLEGROUND, "BG_AV Quest %i completed (need to implement some events here", questid);
@@ -178,7 +180,7 @@ void BattlegroundAV::HandleQuestComplete(uint32 questid, Player* player)
         case AV_QUEST_A_COMMANDER2:
         case AV_QUEST_H_COMMANDER2:
             m_Team_QuestStatus[teamId][2]++;
-            RewardReputationToTeam(teamId, 1, teamId);
+            RewardReputationToTeam(teamId, CFSteamId, 1, teamId);
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
             if (m_Team_QuestStatus[teamId][2] == 60)
                 sLog->outDebug(LOG_FILTER_BATTLEGROUND, "BG_AV Quest %i completed (need to implement some events here", questid);
@@ -187,7 +189,7 @@ void BattlegroundAV::HandleQuestComplete(uint32 questid, Player* player)
         case AV_QUEST_A_COMMANDER3:
         case AV_QUEST_H_COMMANDER3:
             m_Team_QuestStatus[teamId][3]++;
-            RewardReputationToTeam(teamId, 1, teamId);
+            RewardReputationToTeam(teamId, CFSteamId, 1, teamId);
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
             if (m_Team_QuestStatus[teamId][3] == 120)
                 sLog->outDebug(LOG_FILTER_BATTLEGROUND, "BG_AV Quest %i completed (need to implement some events here", questid);
@@ -500,7 +502,7 @@ void BattlegroundAV::EndBattleground(TeamId winnerTeamId)
             rep[iTeamId]   += BG_AV_REP_SURVIVING_CAPTAIN;
         }
         if (rep[iTeamId] != 0)
-            RewardReputationToTeam(iTeamId == TEAM_ALLIANCE ? 730 : 729, rep[iTeamId], iTeamId);
+            RewardReputationToTeam(729, 730, 10, iTeamId == TEAM_ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE);
         if (kills[iTeamId] != 0)
             RewardHonorToTeam(GetBonusHonorFromKill(kills[iTeamId]), iTeamId);
     }
@@ -614,7 +616,7 @@ void BattlegroundAV::EventPlayerDestroyedPoint(BG_AV_Nodes node)
             SpawnBGObject(BG_AV_OBJECT_BURN_DUNBALDAR_SOUTH + i + (tmp * 10), RESPAWN_IMMEDIATELY);
 
         UpdateScore((ownerId == TEAM_ALLIANCE) ? TEAM_HORDE : TEAM_ALLIANCE, -1 * BG_AV_RES_TOWER);
-        RewardReputationToTeam(ownerId == TEAM_ALLIANCE ? 730 : 729, BG_AV_REP_TOWER, ownerId);
+        RewardReputationToTeam(729, 730, BG_AV_REP_TOWER, ownerId);
         RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_TOWER), ownerId);
 
         SpawnBGObject(BG_AV_OBJECT_TAURA_A_DUNBALDAR_SOUTH+ownerId+(2*tmp), RESPAWN_ONE_DAY);
@@ -1174,23 +1176,23 @@ void BattlegroundAV::SendMineWorldStates(uint32 mine)
     UpdateWorldState(BG_AV_MineWorldStates[mine][owner], 1);
 }
 
-WorldSafeLocsEntry const* BattlegroundAV::GetClosestGraveyard(Player* player)
+GraveyardStruct const* BattlegroundAV::GetClosestGraveyard(Player* player)
 {
-    WorldSafeLocsEntry const* pGraveyard = NULL;
-    WorldSafeLocsEntry const* entry = NULL;
+    GraveyardStruct const* pGraveyard = NULL;
+    GraveyardStruct const* entry = NULL;
     float dist = 0;
     float minDist = 0;
     float x, y;
 
     player->GetPosition(x, y);
 
-    pGraveyard = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[player->GetTeamId()+7]);
+    pGraveyard = sGraveyard->GetGraveyard(BG_AV_GraveyardIds[player->GetTeamId()+7]);
     minDist = (pGraveyard->x - x)*(pGraveyard->x - x)+(pGraveyard->y - y)*(pGraveyard->y - y);
 
     for (uint8 i = BG_AV_NODES_FIRSTAID_STATION; i <= BG_AV_NODES_FROSTWOLF_HUT; ++i)
         if (m_Nodes[i].OwnerId == player->GetTeamId() && m_Nodes[i].State == POINT_CONTROLED)
         {
-            entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[i]);
+            entry = sGraveyard->GetGraveyard(BG_AV_GraveyardIds[i]);
             if (entry)
             {
                 dist = (entry->x - x)*(entry->x - x)+(entry->y - y)*(entry->y - y);

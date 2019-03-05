@@ -13,6 +13,7 @@
 #include "Player.h"
 #include "Util.h"
 #include "WorldSession.h"
+#include "GameGraveyard.h"
 
 BattlegroundAB::BattlegroundAB()
 {
@@ -94,7 +95,7 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                     if (honorRewards < uint8(m_TeamScores[teamId] / _honorTics))
                         RewardHonorToTeam(GetBonusHonorFromKill(1), teamId);
                     if (reputationRewards < uint8(m_TeamScores[teamId] / _reputationTics))
-                        RewardReputationToTeam(teamId == TEAM_ALLIANCE ? 509 : 510, 10, teamId);
+                        RewardReputationToTeam(509, 510, 10, teamId == TEAM_ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE);
                     if (information < uint8(m_TeamScores[teamId] / BG_AB_WARNING_NEAR_VICTORY_SCORE))
                     {
                         SendMessageToAll(teamId == TEAM_ALLIANCE ? LANG_BG_AB_A_NEAR_VICTORY : LANG_BG_AB_H_NEAR_VICTORY, CHAT_MSG_BG_SYSTEM_NEUTRAL);
@@ -424,10 +425,10 @@ void BattlegroundAB::EndBattleground(TeamId winnerTeamId)
     _bgEvents.Reset();
 }
 
-WorldSafeLocsEntry const* BattlegroundAB::GetClosestGraveyard(Player* player)
+GraveyardStruct const* BattlegroundAB::GetClosestGraveyard(Player* player)
 {
-    WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(BG_AB_GraveyardIds[BG_AB_SPIRIT_ALIANCE + player->GetTeamId()]);
-    WorldSafeLocsEntry const* nearestEntry = entry;
+    GraveyardStruct const* entry = sGraveyard->GetGraveyard(BG_AB_GraveyardIds[BG_AB_SPIRIT_ALIANCE + player->GetTeamId()]);
+    GraveyardStruct const* nearestEntry = entry;
 
     float pX = player->GetPositionX();
     float pY = player->GetPositionY();
@@ -437,7 +438,7 @@ WorldSafeLocsEntry const* BattlegroundAB::GetClosestGraveyard(Player* player)
     for (uint8 i = BG_AB_NODE_STABLES; i < BG_AB_DYNAMIC_NODES_COUNT; ++i)
         if (_capturePointInfo[i]._ownerTeamId == player->GetTeamId())
         {
-            entry = sWorldSafeLocsStore.LookupEntry(BG_AB_GraveyardIds[i]);
+            entry = sGraveyard->GetGraveyard(BG_AB_GraveyardIds[i]);
             dist = (entry->x - pX)*(entry->x - pX) + (entry->y - pY)*(entry->y - pY);
             if (dist < minDist)
             {

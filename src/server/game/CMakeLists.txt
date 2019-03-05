@@ -17,6 +17,7 @@ file(GLOB_RECURSE sources_AI AI/*.cpp AI/*.h)
 file(GLOB_RECURSE sources_AuctionHouse AuctionHouse/*.cpp AuctionHouse/*.h)
 file(GLOB_RECURSE sources_Battlefield Battlefield/*.cpp Battlefield/*.h)
 file(GLOB_RECURSE sources_Battlegrounds Battlegrounds/*.cpp Battlegrounds/*.h)
+file(GLOB_RECURSE sources_Crossfaction Battlegrounds/Crossfaction/*.cpp Battlegrounds/Crossfaction/*.h)
 file(GLOB_RECURSE sources_Calendar Calendar/*.cpp Calendar/*.h)
 file(GLOB_RECURSE sources_Chat Chat/*.cpp Chat/*.h)
 file(GLOB_RECURSE sources_Combat Combat/*.cpp Combat/*.h)
@@ -35,6 +36,7 @@ file(GLOB_RECURSE sources_Loot Loot/*.cpp Loot/*.h)
 file(GLOB_RECURSE sources_Mails Mails/*.cpp Mails/*.h)
 file(GLOB_RECURSE sources_Maps Maps/*.cpp Maps/*.h)
 file(GLOB_RECURSE sources_Miscellaneous Miscellaneous/*.cpp Miscellaneous/*.h)
+file(GLOB_RECURSE sources_Motd Motd/*.cpp Motd/*.h)
 file(GLOB_RECURSE sources_Movement Movement/*.cpp Movement/*.h)
 file(GLOB_RECURSE sources_OutdoorPvP OutdoorPvP/*.cpp OutdoorPvP/*.h)
 file(GLOB_RECURSE sources_Petitions Petitions/*.cpp Petitions/*.h)
@@ -70,6 +72,7 @@ set(game_STAT_SRCS
   ${sources_AuctionHouse}
   ${sources_Battlefield}
   ${sources_Battlegrounds}
+  ${sources_Crossfaction}
   ${sources_Calendar}
   ${sources_Chat}
   ${sources_Combat}
@@ -88,6 +91,7 @@ set(game_STAT_SRCS
   ${sources_Mails}
   ${sources_Maps}
   ${sources_Miscellaneous}
+  ${sources_Motd}
   ${sources_Movement}
   ${sources_OutdoorPvP}
   ${sources_Petitions}
@@ -146,8 +150,10 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Battlefield/Zones
   ${CMAKE_CURRENT_SOURCE_DIR}/Battlegrounds
   ${CMAKE_CURRENT_SOURCE_DIR}/Battlegrounds/Zones
+  ${CMAKE_CURRENT_SOURCE_DIR}/Battlegrounds/Crossfaction
   ${CMAKE_CURRENT_SOURCE_DIR}/Calendar
   ${CMAKE_CURRENT_SOURCE_DIR}/Chat
+  ${CMAKE_CURRENT_SOURCE_DIR}/Crossfaction
   ${CMAKE_CURRENT_SOURCE_DIR}/Chat/Channels
   ${CMAKE_CURRENT_SOURCE_DIR}/Combat
   ${CMAKE_CURRENT_SOURCE_DIR}/Conditions
@@ -181,6 +187,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Mails
   ${CMAKE_CURRENT_SOURCE_DIR}/Maps
   ${CMAKE_CURRENT_SOURCE_DIR}/Miscellaneous
+  ${CMAKE_CURRENT_SOURCE_DIR}/Motd
   ${CMAKE_CURRENT_SOURCE_DIR}/Movement
   ${CMAKE_CURRENT_SOURCE_DIR}/Movement/Spline
   ${CMAKE_CURRENT_SOURCE_DIR}/Movement/MovementGenerators
@@ -212,6 +219,9 @@ include_directories(
   ${MYSQL_INCLUDE_DIR}
   ${OPENSSL_INCLUDE_DIR}
 )
+
+# Group sources
+GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(game STATIC
   ${game_STAT_SRCS}
