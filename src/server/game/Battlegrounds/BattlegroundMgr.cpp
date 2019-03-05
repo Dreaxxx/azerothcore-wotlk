@@ -34,7 +34,6 @@
 #include "DisableMgr.h"
 #include "Opcodes.h"
 #include "BattlegroundQueue.h"
-#include "GameGraveyard.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
 #endif
@@ -145,7 +144,7 @@ void BattlegroundMgr::Update(uint32 diff)
 void BattlegroundMgr::BuildBattlegroundStatusPacket(WorldPacket* data, Battleground* bg, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint8 arenatype, TeamId teamId, bool isRated, BattlegroundTypeId forceBgTypeId)
 {
     // pussywizard:
-    //ASSERT(QueueSlot < PLAYER_MAX_BATTLEGROUND_QUEUES);
+    // ASSERT(QueueSlot < PLAYER_MAX_BATTLEGROUND_QUEUES);
 
     if (StatusID == STATUS_NONE || !bg)
     {
@@ -650,7 +649,7 @@ void BattlegroundMgr::CreateInitialBattlegrounds()
         else
         {
             uint32 startId = fields[5].GetUInt32();
-            if (GraveyardStruct const* start = sGraveyard->GetGraveyard(startId))
+            if (WorldSafeLocsEntry const* start = sWorldSafeLocsStore.LookupEntry(startId))
             {
                 data.Team1StartLocX = start->x;
                 data.Team1StartLocY = start->y;
@@ -659,12 +658,12 @@ void BattlegroundMgr::CreateInitialBattlegrounds()
             }
             else
             {
-                sLog->outError("Table `battleground_template` for id %u have non-existed `game_graveyard` table id %u in field `AllianceStartLoc`. BG not created.", data.bgTypeId, startId);
+                sLog->outError("Table `battleground_template` for id %u have non-existed WorldSafeLocs.dbc id %u in field `AllianceStartLoc`. BG not created.", data.bgTypeId, startId);
                 continue;
             }
 
             startId = fields[7].GetUInt32();
-            if (GraveyardStruct const* start = sGraveyard->GetGraveyard(startId))
+            if (WorldSafeLocsEntry const* start = sWorldSafeLocsStore.LookupEntry(startId))
             {
                 data.Team2StartLocX = start->x;
                 data.Team2StartLocY = start->y;
@@ -673,7 +672,7 @@ void BattlegroundMgr::CreateInitialBattlegrounds()
             }
             else
             {
-                sLog->outError("Table `battleground_template` for id %u have non-existed `game_graveyard` table id %u in field `HordeStartLoc`. BG not created.", data.bgTypeId, startId);
+                sLog->outError("Table `battleground_template` for id %u have non-existed WorldSafeLocs.dbc id %u in field `HordeStartLoc`. BG not created.", data.bgTypeId, startId);
                 continue;
             }
         }
@@ -777,7 +776,6 @@ void BattlegroundMgr::SendToBattleground(Player* player, uint32 instanceId, Batt
         bg->GetTeamStartLoc(team, x, y, z, o);
         player->TeleportTo(bg->GetMapId(), x, y, z, o);
     }
-
 }
 
 void BattlegroundMgr::SendAreaSpiritHealerQueryOpcode(Player* player, Battleground* bg, uint64 guid)
@@ -1072,7 +1070,7 @@ void BattlegroundMgr::InviteGroupToBG(GroupQueueInfo* ginfo, Battleground* bg, T
         bgQueue.PlayerInvitedToBGUpdateAverageWaitTime(ginfo);
 
         // increase invited counter for each invited player
-        bg->IncreaseInvitedCount(player->GetTeamId());
+        bg->IncreaseInvitedCount(player->GetTeamId);
 
         // create remind invite events
         BGQueueInviteEvent* inviteEvent = new BGQueueInviteEvent(player->GetGUID(), ginfo->IsInvitedToBGInstanceGUID, ginfo->BgTypeId, ginfo->ArenaType, ginfo->RemoveInviteTime);

@@ -33,7 +33,6 @@
 #include "BattlegroundRV.h"
 #include "Transport.h"
 #include "ScriptMgr.h"
-#include "GameGraveyard.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
 #endif
@@ -42,7 +41,7 @@ namespace Trinity
     class BattlegroundChatBuilder
     {
         public:
-            BattlegroundChatBuilder(ChatMsg msgtype, uint32 textId, Player const* source, va_list* args = NULL)
+            BattlegroundChatBuilder(ChatMsg msgtype, int32 textId, Player const* source, va_list* args = NULL)
                 : _msgtype(msgtype), _textId(textId), _source(source), _args(args) { }
 
             void operator()(WorldPacket& data, LocaleConstant loc_idx)
@@ -71,7 +70,7 @@ namespace Trinity
             }
 
             ChatMsg _msgtype;
-            uint32 _textId;
+            int32 _textId;
             Player const* _source;
             va_list* _args;
     };
@@ -79,7 +78,7 @@ namespace Trinity
     class Battleground2ChatBuilder
     {
         public:
-            Battleground2ChatBuilder(ChatMsg msgtype, uint32 textId, Player const* source, int32 arg1, int32 arg2)
+            Battleground2ChatBuilder(ChatMsg msgtype, int32 textId, Player const* source, int32 arg1, int32 arg2)
                 : _msgtype(msgtype), _textId(textId), _source(source), _arg1(arg1), _arg2(arg2) {}
 
             void operator()(WorldPacket& data, LocaleConstant loc_idx)
@@ -96,10 +95,10 @@ namespace Trinity
 
         private:
             ChatMsg _msgtype;
-            uint32 _textId;
+            int32 _textId;
             Player const* _source;
-            uint32 _arg1;
-            uint32 _arg2;
+            int32 _arg1;
+            int32 _arg2;
     };
 }                                                           // namespace Trinity
 
@@ -1513,7 +1512,7 @@ void Battleground::RelocateDeadPlayers(uint64 queueIndex)
     std::vector<uint64>& ghostList = m_ReviveQueue[queueIndex];
     if (!ghostList.empty())
     {
-        GraveyardStruct const* closestGrave = NULL;
+        WorldSafeLocsEntry const* closestGrave = NULL;
         for (std::vector<uint64>::const_iterator itr = ghostList.begin(); itr != ghostList.end(); ++itr)
         {
             Player* player = ObjectAccessor::FindPlayer(*itr);
@@ -1769,7 +1768,7 @@ bool Battleground::AddSpiritGuide(uint32 type, float x, float y, float z, float 
     return false;
 }
 
-void Battleground::SendMessageToAll(uint32 entry, ChatMsg type, Player const* source)
+void Battleground::SendMessageToAll(int32 entry, ChatMsg type, Player const* source)
 {
     if (!entry)
         return;
@@ -1779,7 +1778,7 @@ void Battleground::SendMessageToAll(uint32 entry, ChatMsg type, Player const* so
     BroadcastWorker(bg_do);
 }
 
-void Battleground::PSendMessageToAll(uint32 entry, ChatMsg type, Player const* source, ...)
+void Battleground::PSendMessageToAll(int32 entry, ChatMsg type, Player const* source, ...)
 {
     if (!entry)
         return;
@@ -1794,7 +1793,7 @@ void Battleground::PSendMessageToAll(uint32 entry, ChatMsg type, Player const* s
     va_end(ap);
 }
 
-void Battleground::SendWarningToAll(uint32 entry, ...)
+void Battleground::SendWarningToAll(int32 entry, ...)
 {
     if (!entry)
         return;
@@ -1819,7 +1818,7 @@ void Battleground::SendWarningToAll(uint32 entry, ...)
     }
 }
 
-void Battleground::SendMessage2ToAll(uint32 entry, ChatMsg type, Player const* source, uint32 arg1, uint32 arg2)
+void Battleground::SendMessage2ToAll(int32 entry, ChatMsg type, Player const* source, int32 arg1, int32 arg2)
 {
     Trinity::Battleground2ChatBuilder bg_builder(type, entry, source, arg1, arg2);
     Trinity::LocalizedPacketDo<Trinity::Battleground2ChatBuilder> bg_do(bg_builder);
@@ -1991,9 +1990,9 @@ void Battleground::SetBgRaid(TeamId teamId, Group* bg_raid)
     old_raid = bg_raid;
 }
 
-GraveyardStruct const* Battleground::GetClosestGraveyard(Player* player)
+WorldSafeLocsEntry const* Battleground::GetClosestGraveyard(Player* player)
 {
-    return sGraveyard->GetClosestGraveyard(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetMapId(), player->GetTeamId());
+    return sObjectMgr->GetClosestGraveyard(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetMapId(), player->GetTeamId());
 }
 
 void Battleground::StartTimedAchievement(AchievementCriteriaTimedTypes type, uint32 entry)
