@@ -15181,7 +15181,7 @@ uint32 Player::GetGossipTextId(uint32 menuId, WorldObject* source)
 
     for (GossipMenusContainer::const_iterator itr = menuBounds.first; itr != menuBounds.second; ++itr)
     {
-        if (sConditionMgr->IsObjectMeetToConditions(this, source, itr->second.Conditions))
+        if (sConditionMgr->IsObjectMeetToConditions(this, source, itr->second.conditions))
             textId = itr->second.text_id;
     }
 
@@ -16032,35 +16032,18 @@ void Player::FailQuest(uint32 questId)
         else
             SendQuestFailed(questId);
 
-        // Destroy quest items on quest failure.
-        for (uint8 i = 0; i < QUEST_ITEM_OBJECTIVES_COUNT; ++i)
-            if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(quest->RequiredItemId[i]))
-                if (quest->RequiredItemCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
-                    DestroyItemCount(quest->RequiredItemId[i], quest->RequiredItemCount[i], true);
-
+         // Destroy quest items on quest failure.
+        for (uint8 i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
+            if (quest->RequiredItemId[i] > 0 && quest->RequiredItemCount[i] > 0)
+                // Destroy items received on starting the quest.
+                DestroyItemCount(quest->RequiredItemId[i], quest->RequiredItemCount[i], true, true);
         for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
-            if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(quest->ItemDrop[i]))
-                if (quest->ItemDropQuantity[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
-                    DestroyItemCount(quest->ItemDrop[i], quest->ItemDropQuantity[i], true);
+            if (quest->RequiredSourceItemId[i] > 0 && quest->RequiredSourceItemCount[i] > 0)
+                // Destroy items received during the quest.
+                DestroyItemCount(quest->RequiredSourceItemId[i], quest->RequiredSourceItemCount[i], true, true);
     }
 }
 
-void Player::AbandonQuest(uint32 questId)
-{
-    if (Quest const* quest = sObjectMgr->GetQuestTemplate(questId))
-    {
-        // It will Destroy quest items on quests abandons.
-        for (uint8 i = 0; i < QUEST_ITEM_OBJECTIVES_COUNT; ++i)
-            if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(quest->RequiredItemId[i]))
-                if (quest->RequiredItemCount[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
-                    DestroyItemCount(quest->RequiredItemId[i], quest->RequiredItemCount[i], true);
-
-        for (uint8 i = 0; i < QUEST_SOURCE_ITEM_IDS_COUNT; ++i)
-            if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(quest->ItemDrop[i]))
-                if (quest->ItemDropQuantity[i] > 0 && itemTemplate->Bonding == BIND_QUEST_ITEM)
-                    DestroyItemCount(quest->ItemDrop[i], quest->ItemDropQuantity[i], true);
-    }
-}
 
 bool Player::SatisfyQuestSkill(Quest const* qInfo, bool msg) const
 { 
@@ -17286,12 +17269,12 @@ void Player::ReputationChanged2(FactionEntry const* factionEntry)
     }
 }
 
-bool Player::HasQuestForItem(uint32 itemid, uint32 excludeQuestId /* 0 */, bool turnIn /* false */) const
+bool Player::HasQuestForItem(uint32 itemid) const
 { 
     for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
     {
         uint32 questid = GetQuestSlotQuestId(i);
-        if (questid == 0 || questid == excludeQuestId)
+        if (questid == 0)
             continue;
 
         QuestStatusMap::const_iterator qs_itr = m_QuestStatus.find(questid);
@@ -17300,7 +17283,7 @@ bool Player::HasQuestForItem(uint32 itemid, uint32 excludeQuestId /* 0 */, bool 
 
         QuestStatusData const& q_status = qs_itr->second;
 
-        if ((q_status.Status == QUEST_STATUS_INCOMPLETE) || (turnIn && q_status.Status == QUEST_STATUS_COMPLETE))
+        if (q_status.Status == QUEST_STATUS_INCOMPLETE)
         {
             Quest const* qinfo = sObjectMgr->GetQuestTemplate(questid);
             if (!qinfo)
@@ -17315,28 +17298,27 @@ bool Player::HasQuestForItem(uint32 itemid, uint32 excludeQuestId /* 0 */, bool 
             // This part for ReqItem drop
             for (uint8 j = 0; j < QUEST_ITEM_OBJECTIVES_COUNT; ++j)
             {
-                if ((itemid == qinfo->RequiredItemId[j] && q_status.ItemCount[j] < qinfo->RequiredItemCount[j]) || (turnIn && q_status.ItemCount[j] >= qinfo->RequiredItemCount[j]))
+                if (itemid == qinfo->RequiredItemId[j] && q_status.ItemCount[j] < qinfo->RequiredItemCount[j])
                     return true;
             }
             // This part - for ReqSource
             for (uint8 j = 0; j < QUEST_SOURCE_ITEM_IDS_COUNT; ++j)
             {
                 // examined item is a source item
-                if (qinfo->ItemDrop[j] == itemid)
+                if (qinfo->RequiredSourceItemId[j] == itemid)
                 {
                     ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemid);
-                    uint32 ownedCount = GetItemCount(itemid, true);
+
                     // 'unique' item
-                    if ((pProto->MaxCount && int32(ownedCount) < pProto->MaxCount) || (turnIn && int32(ownedCount) >= pProto->MaxCount))
+                    if (pProto->MaxCount && int32(GetItemCount(itemid, true)) < pProto->MaxCount)
                         return true;
 
                     // allows custom amount drop when not 0
-                    if (qinfo->ItemDropQuantity[j])
+                    if (qinfo->RequiredSourceItemCount[j])
                     {
-                        if ((ownedCount < qinfo->ItemDropQuantity[j]) || (turnIn && ownedCount >= qinfo->ItemDropQuantity[j]))
+                        if (GetItemCount(itemid, true) < qinfo->RequiredSourceItemCount[j])
                             return true;
-                    }
-                    else if (ownedCount < pProto->GetMaxStackSize())
+                    } else if (GetItemCount(itemid, true) < pProto->GetMaxStackSize())
                         return true;
                 }
             }
