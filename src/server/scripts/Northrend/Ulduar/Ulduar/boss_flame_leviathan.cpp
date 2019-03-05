@@ -125,6 +125,7 @@ enum Texts
     FLAME_LEVIATHAN_EMOTE_PURSUE,
     FLAME_LEVIATHAN_EMOTE_OVERLOAD,
     FLAME_LEVIATHAN_EMOTE_REPAIR
+
 };
 
 enum Sounds
@@ -224,7 +225,7 @@ public:
         }
 
         void MoveInLineOfSight(Unit*) override {}
-        void JustSummoned(Creature* cr) override
+        void JustSummoned(Creature* cr)  override
         {
             if (cr->GetEntry() != NPC_FLAME_LEVIATHAN_TURRET && cr->GetEntry() != NPC_SEAT)
                 summons.Summon(cr);
@@ -394,7 +395,7 @@ public:
                     events.RepeatEvent(5000);
                     break;
                 case EVENT_PURSUE:
-                    Talk(FLAME_LEVIATHAN_EMOTE_PURSUE);
+                    Talk(FLAME_LEVIATHAN_SAY_PURSUE);
                     me->CastSpell(me, SPELL_PURSUED, false);
                     events.RescheduleEvent(EVENT_PURSUE, 31000);
                     return;
@@ -480,7 +481,7 @@ public:
                     me->CastSpell(me,SPELL_SYSTEMS_SHUTDOWN,true);
                 }
             }
-        }        
+        }
     };
 };
 
@@ -604,16 +605,15 @@ void boss_flame_leviathan::boss_flame_leviathanAI::ScheduleEvents()
     events.RescheduleEvent(EVENT_PURSUE, 0);
 }
 
-
 void boss_flame_leviathan::boss_flame_leviathanAI::SpellHit(Unit*  /*caster*/, const SpellInfo* spellInfo)
 {
     if (spellInfo->Id == SPELL_SYSTEMS_SHUTDOWN)
     {
         _shutdown = true; // ACHIEVEMENT
 
-       Talk(FLAME_LEVIATHAN_EMOTE_OVERLOAD);
-       Talk(FLAME_LEVIATHAN_EMOTE_REPAIR);
-       Talk(FLAME_LEVIATHAN_SAY_OVERLOAD);
+        Talk(FLAME_LEVIATHAN_EMOTE_OVERLOAD);
+        Talk(FLAME_LEVIATHAN_EMOTE_REPAIR);
+        Talk(FLAME_LEVIATHAN_SAY_OVERLOAD);
 
         events.DelayEvents(20 * IN_MILLISECONDS + 1);
         events.ScheduleEvent(EVENT_REINSTALL, 20*IN_MILLISECONDS);
@@ -646,7 +646,7 @@ void boss_flame_leviathan::boss_flame_leviathanAI::KilledUnit(Unit* who)
         events.RescheduleEvent(EVENT_PURSUE, 0);
 
     if (who->GetTypeId() == TYPEID_PLAYER)
-        Talk(FLAME_LEVIATHAN_SAY_SLAY);    
+        Talk(FLAME_LEVIATHAN_SAY_SLAY);
 }
 
 void boss_flame_leviathan::boss_flame_leviathanAI::SummonTowerHelpers(uint8 towerId)
@@ -762,7 +762,7 @@ public:
                         turret->SetUInt32Value(UNIT_FIELD_FLAGS, 0);
                         turret->GetAI()->AttackStart(who);
                         if (Creature* leviathan = me->GetVehicleCreatureBase())
-                            leviathan->AI()->Talk(FLAME_LEVIATHAN_SAY_PLAYER_RIDING);                        
+                            leviathan->AI()->Talk(FLAME_LEVIATHAN_SAY_PLAYER_RIDING);
                     }
                     else
                     {
@@ -794,7 +794,7 @@ class boss_flame_leviathan_defense_turret : public CreatureScript
             bool _setHealth;
             void DamageTaken(Unit* who, uint32 &damage, DamageEffectType, SpellSchoolMask) override
             {
-                if (!who || !CanAIAttack(who))
+                if (!CanAIAttack(who))
                 {
                     _setHealth = true;
                     damage = 0;
@@ -811,12 +811,12 @@ class boss_flame_leviathan_defense_turret : public CreatureScript
                         device->SetUInt32Value(UNIT_FIELD_FLAGS, 0); // unselectable
 
                 if (Creature* leviathan = ObjectAccessor::GetCreature(*me, _instance->GetData64(TYPE_LEVIATHAN)))
-                    leviathan->AI()->DoAction(ACTION_DESTROYED_TURRET);                    
+                    leviathan->AI()->DoAction(ACTION_DESTROYED_TURRET);
             }
 
             bool CanAIAttack(Unit const* who) const override
             {
-                if (who->GetTypeId() != TYPEID_PLAYER || !who->GetVehicle() || who->GetVehicleBase()->GetEntry() != NPC_SEAT)
+                if (!who || who->GetTypeId() != TYPEID_PLAYER || !who->GetVehicle() || who->GetVehicleBase()->GetEntry() != NPC_SEAT)
                     return false;
                 return true;
             }
@@ -837,7 +837,7 @@ class boss_flame_leviathan_defense_turret : public CreatureScript
                 if (Player* plr = who->ToPlayer()) // make sure that there's no death player on the seat.
                     if (plr->GetVehicle())
                         plr->ExitVehicle();
-            }            
+            }
         };
 
         CreatureAI* GetAI(Creature* creature) const override
@@ -887,7 +887,7 @@ class npc_freya_ward : public CreatureScript
 public:
     npc_freya_ward() : CreatureScript("npc_freya_ward") { }
 
-    CreatureAI* GetAI(Creature* pCreature) const
+    CreatureAI* GetAI(Creature* pCreature) const override
     {
         return new npc_freya_wardAI (pCreature);
     }
@@ -994,7 +994,7 @@ public:
             }
         }
 
-        void MovementInform(uint32 type, uint32  /*param*/) override 
+        void MovementInform(uint32 type, uint32  /*param*/) override
         {
             if (type == FOLLOW_MOTION_TYPE && !_timeToHit)
             {
@@ -1072,7 +1072,7 @@ public:
                 summons.DespawnAll();
         }
 
-        void Reset() override 
+        void Reset() override
         {
             summons.DespawnAll();
             _spellTimer = 0;
@@ -1085,9 +1085,9 @@ public:
         }
 
         void JustSummoned(Creature* cr) override { summons.Summon(cr); }
-        void SummonedCreatureDespawn(Creature* cr) override { summons.Despawn(cr); }
+        void SummonedCreatureDespawn(Creature* cr)  override { summons.Despawn(cr); }
 
-        void UpdateAI(uint32 diff) override 
+        void UpdateAI(uint32 diff) override
         {
             npc_escortAI::UpdateAI(diff);
 
@@ -1109,7 +1109,7 @@ class npc_thorims_hammer : public CreatureScript
 public:
     npc_thorims_hammer() : CreatureScript("npc_thorims_hammer") { }
 
-    CreatureAI* GetAI(Creature* pCreature) const override 
+    CreatureAI* GetAI(Creature* pCreature) const override
     {
         return new npc_thorims_hammerAI (pCreature);
     }
@@ -1298,7 +1298,7 @@ public:
                             NextStep(14000);
                             break;
                         case 1:
-                           _dellorah->AI()->Talk(DELLORAH_SAY_1);
+                            _dellorah->AI()->Talk(DELLORAH_SAY_1);
                             NextStep(10000);
                             break;
                         case 2:
@@ -1306,11 +1306,11 @@ public:
                             NextStep(14000);
                             break;
                         case 3:
-                           _dellorah->AI()->Talk(DELLORAH_SAY_2);
+                            _dellorah->AI()->Talk(DELLORAH_SAY_2);
                             NextStep(11000);
                             break;
                         case 4:
-                           Talk(NORGANNON_SAY_2);
+                            Talk(NORGANNON_SAY_2);
                             NextStep(12000);
                             break;
                         case 5:
@@ -1330,7 +1330,7 @@ public:
                             NextStep(7000);
                             break;
                         case 9:
-                           _dellorah->AI()->Talk(DELLORAH_SAY_5);
+                            _dellorah->AI()->Talk(DELLORAH_SAY_5);
                             NextStep(7000);
                             break;
                         case 10:
@@ -1343,7 +1343,7 @@ public:
                             NextStep(6000);
                             break;
                         case 11:
-                           Talk(NORGANNON_SAY_5);
+                            Talk(NORGANNON_SAY_5);
                             NextStep(9000);
                             break;
                         case 12:
@@ -2142,7 +2142,7 @@ class spell_vehicle_grab_pyrite : public SpellScriptLoader
             }
         };
 
-        SpellScript* GetSpellScript() const
+        SpellScript* GetSpellScript() const override
         {
             return new spell_vehicle_grab_pyrite_SpellScript();
         }
