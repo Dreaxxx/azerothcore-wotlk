@@ -278,17 +278,17 @@ void WorldSession::HandleNpcTextQueryOpcode(WorldPacket & recvData)
 
     recvData >> textID;
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_NPC_TEXT_QUERY TextId: %u", textID);
+    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_NPC_TEXT_QUERY ID '%u'", textID);
 #endif
 
     recvData >> guid;
 
-    GossipText const* gossip = sObjectMgr->GetGossipText(textID);
+    GossipText const* pGossip = sObjectMgr->GetGossipText(textID);
 
     WorldPacket data(SMSG_NPC_TEXT_UPDATE, 100);          // guess size
     data << textID;
 
-    if (!gossip)
+    if (!pGossip)
     {
         for (uint8 i = 0; i < MAX_GOSSIP_TEXT_OPTIONS; ++i)
         {
@@ -308,10 +308,10 @@ void WorldSession::HandleNpcTextQueryOpcode(WorldPacket & recvData)
     {
         std::string text0[MAX_GOSSIP_TEXT_OPTIONS], text1[MAX_GOSSIP_TEXT_OPTIONS];
         LocaleConstant locale = GetSessionDbLocaleIndex();
-
+        
         for (uint8 i = 0; i < MAX_GOSSIP_TEXT_OPTIONS; ++i)
         {
-            BroadcastText const* bct = sObjectMgr->GetBroadcastText(gossip->Options[i].BroadcastTextID);
+            BroadcastText const* bct = sObjectMgr->GetBroadcastText(pGossip->Options[i].BroadcastTextID);
             if (bct)
             {
                 text0[i] = bct->GetText(locale, GENDER_MALE, true);
@@ -319,8 +319,8 @@ void WorldSession::HandleNpcTextQueryOpcode(WorldPacket & recvData)
             }
             else
             {
-                text0[i] = gossip->Options[i].Text_0;
-                text1[i] = gossip->Options[i].Text_1;
+                text0[i] = pGossip->Options[i].Text_0;
+                text1[i] = pGossip->Options[i].Text_1;
             }
 
             if (locale != DEFAULT_LOCALE && !bct)
@@ -332,7 +332,7 @@ void WorldSession::HandleNpcTextQueryOpcode(WorldPacket & recvData)
                 }
             }
 
-            data << gossip->Options[i].Probability;
+            data << pGossip->Options[i].Probability;
 
             if (text0[i].empty())
                 data << text1[i];
@@ -344,12 +344,12 @@ void WorldSession::HandleNpcTextQueryOpcode(WorldPacket & recvData)
             else
                 data << text1[i];
 
-            data << gossip->Options[i].Language;
+            data << pGossip->Options[i].Language;
 
             for (uint8 j = 0; j < MAX_GOSSIP_TEXT_EMOTES; ++j)
             {
-                data << gossip->Options[i].Emotes[j]._Delay;
-                data << gossip->Options[i].Emotes[j]._Emote;
+                data << pGossip->Options[i].Emotes[j]._Delay;
+                data << pGossip->Options[i].Emotes[j]._Emote;
             }
         }
     }

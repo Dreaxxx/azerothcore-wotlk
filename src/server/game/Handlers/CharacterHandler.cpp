@@ -27,7 +27,6 @@
 #include "Player.h"
 #include "ReputationMgr.h"
 #include "ScriptMgr.h"
-#include "ServerMotd.h"
 #include "SharedDefines.h"
 #include "SocialMgr.h"
 #include "SpellAuras.h"
@@ -678,13 +677,10 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket& recvData)
 {
     uint64 guid;
     recvData >> guid;
-    // Initiating
-    uint32 initAccountId = GetAccountId();
 
     // can't delete loaded character
     if (ObjectAccessor::FindPlayerInOrOutOfWorld(guid) || sWorld->FindOfflineSessionForCharacterGUID(GUID_LOPART(guid)))
     {
-        sScriptMgr->OnPlayerFailedDelete(guid, initAccountId);
         WorldPacket data(SMSG_CHAR_DELETE, 1);
         data << (uint8)CHAR_DELETE_FAILED;
         SendPacket(&data);
@@ -697,7 +693,6 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket& recvData)
     // is guild leader
     if (sGuildMgr->GetGuildByLeader(guid))
     {
-        sScriptMgr->OnPlayerFailedDelete(guid, initAccountId);
         WorldPacket data(SMSG_CHAR_DELETE, 1);
         data << (uint8)CHAR_DELETE_FAILED_GUILD_LEADER;
         SendPacket(&data);
@@ -707,7 +702,6 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket& recvData)
     // is arena team captain
     if (sArenaTeamMgr->GetArenaTeamByCaptain(guid))
     {
-        sScriptMgr->OnPlayerFailedDelete(guid, initAccountId);
         WorldPacket data(SMSG_CHAR_DELETE, 1);
         data << (uint8)CHAR_DELETE_FAILED_ARENA_CAPTAIN;
         SendPacket(&data);
@@ -721,21 +715,15 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket& recvData)
     }
 
     // prevent deleting other players' characters using cheating tools
-    if (accountId != initAccountId)
-    {
-        sScriptMgr->OnPlayerFailedDelete(guid, initAccountId);
+    if (accountId != GetAccountId())
         return;
-    }
 
     std::string IP_str = GetRemoteAddress();
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
     sLog->outDetail("Account: %d (IP: %s) Delete Character:[%s] (GUID: %u)", GetAccountId(), IP_str.c_str(), name.c_str(), GUID_LOPART(guid));
 #endif
     sLog->outChar("Account: %d (IP: %s) Delete Character:[%s] (GUID: %u)", GetAccountId(), IP_str.c_str(), name.c_str(), GUID_LOPART(guid));
-
-    // To prevent hook failure, place hook before removing reference from DB
-    sScriptMgr->OnPlayerDelete(guid, initAccountId); // To prevent race conditioning, but as it also makes sense, we hand the accountId over for successful delete.
-    // Shouldn't interfere with character deletion though
+    sScriptMgr->OnPlayerDelete(guid);
 
     if (sLog->IsOutCharDump())                                // optimize GetPlayerDump call
     {
@@ -757,7 +745,7 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recvData)
 {
     if (PlayerLoading() || GetPlayer() != NULL)
     {
-        sLog->outError("Player tries to login again, AccountId = %d", GetAccountId());
+        sLog->outError("Player tryes to login again, AccountId = %d", GetAccountId());
         KickPlayer();
         return;
     }
@@ -912,7 +900,36 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
 
     // Send MOTD
     {
-        SendPacket(Motd::GetMotdPacket());
+        data.Initialize(SMSG_MOTD, 50);                     // new in 2.0.1
+        data << (uint32)0;
+
+        uint32 linecount=0;
+        std::string str_motd = sWorld->GetMotd();
+        std::string::size_type pos, nextpos;
+
+        pos = 0;
+        while ((nextpos= str_motd.find('@', pos)) != std::string::npos)
+        {
+            if (nextpos != pos)
+            {
+                data << str_motd.substr(pos, nextpos-pos);
+                ++linecount;
+            }
+            pos = nextpos+1;
+        }
+
+        if (pos<str_motd.length())
+        {
+            data << str_motd.substr(pos);
+            ++linecount;
+        }
+
+        data.put(0, linecount);
+
+        SendPacket(&data);
+#if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
+        sLog->outStaticDebug("WORLD: Sent motd (SMSG_MOTD)");
+#endif
 
         // send server info
         if (sWorld->getIntConfig(CONFIG_ENABLE_SINFO_LOGIN) == 1)
@@ -1203,7 +1220,7 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
 
     sScriptMgr->OnPlayerLogin(pCurrChar);
     delete holder;
-    
+
     if (pCurrChar->GetTeamId() != pCurrChar->GetCFSTeamId())
         pCurrChar->FitPlayerInTeam(pCurrChar->GetBattleground() && !pCurrChar->GetBattleground()->isArena() ? true : false, pCurrChar->GetBattleground());
 }
@@ -1232,7 +1249,36 @@ void WorldSession::HandlePlayerLoginToCharInWorld(Player* pCurrChar)
 
     // Send MOTD
     {
-        SendPacket(Motd::GetMotdPacket());
+        data.Initialize(SMSG_MOTD, 50);                     // new in 2.0.1
+        data << (uint32)0;
+
+        uint32 linecount=0;
+        std::string str_motd = sWorld->GetMotd();
+        std::string::size_type pos, nextpos;
+
+        pos = 0;
+        while ((nextpos= str_motd.find('@', pos)) != std::string::npos)
+        {
+            if (nextpos != pos)
+            {
+                data << str_motd.substr(pos, nextpos-pos);
+                ++linecount;
+            }
+            pos = nextpos+1;
+        }
+
+        if (pos<str_motd.length())
+        {
+            data << str_motd.substr(pos);
+            ++linecount;
+        }
+
+        data.put(0, linecount);
+
+        SendPacket(&data);
+#if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
+        sLog->outStaticDebug("WORLD: Sent motd (SMSG_MOTD)");
+#endif
 
         // send server info
         if (sWorld->getIntConfig(CONFIG_ENABLE_SINFO_LOGIN) == 1)
@@ -2519,7 +2565,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
                 {
                     Quest const* quest = iter->second;
                     uint32 newRaceMask = (team == TEAM_ALLIANCE) ? RACEMASK_ALLIANCE : RACEMASK_HORDE;
-                    if (quest->GetAllowableRaces() && !(quest->GetAllowableRaces() & newRaceMask))
+                    if (quest->GetRequiredRaces() && !(quest->GetRequiredRaces() & newRaceMask))
                     {
                         stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHAR_QUESTSTATUS_REWARDED_ACTIVE_BY_QUEST);
                         stmt->setUInt32(0, quest->GetQuestId());
