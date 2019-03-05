@@ -15,7 +15,6 @@
 #include "Player.h"
 #include "World.h"
 #include "WorldPacket.h"
-#include "GameGraveyard.h"
 
 BattlegroundWS::BattlegroundWS()
 {
@@ -174,7 +173,7 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* player)
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_HORDE);
         SendMessageToAll(LANG_BG_WS_CAPTURED_AF, CHAT_MSG_BG_SYSTEM_HORDE, player);
     }
-    
+
     RewardReputationToTeam(890, 889, _reputationCapture, player->GetTeamId());
 
     SpawnBGObject(BG_WS_OBJECT_H_FLAG, BG_WS_FLAG_RESPAWN_TIME);
@@ -405,10 +404,10 @@ bool BattlegroundWS::SetupBattleground()
     AddObject(BG_WS_OBJECT_DOOR_H_4, BG_OBJECT_DOOR_H_4_WS_ENTRY, 950.7952f, 1459.583f, 342.1523f, 0.05235988f, 0, 0, 0.02617695f, 0.9996573f, RESPAWN_IMMEDIATELY);
     
 
-    GraveyardStruct const* sg = sGraveyard->GetGraveyard(WS_GRAVEYARD_MAIN_ALLIANCE);
+    WorldSafeLocsEntry const* sg = sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_MAIN_ALLIANCE);
     AddSpiritGuide(WS_SPIRIT_MAIN_ALLIANCE, sg->x, sg->y, sg->z, 3.124139f, TEAM_ALLIANCE);
 
-    sg = sGraveyard->GetGraveyard(WS_GRAVEYARD_MAIN_HORDE);
+    sg = sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_MAIN_HORDE);
     AddSpiritGuide(WS_SPIRIT_MAIN_HORDE, sg->x, sg->y, sg->z, 3.193953f, TEAM_HORDE);
 
     for (uint32 i = BG_WS_OBJECT_DOOR_A_1; i < BG_WS_OBJECT_MAX; ++i)
@@ -499,12 +498,12 @@ void BattlegroundWS::UpdatePlayerScore(Player* player, uint32 type, uint32 value
     }
 }
 
-GraveyardStruct const* BattlegroundWS::GetClosestGraveyard(Player* player)
+WorldSafeLocsEntry const* BattlegroundWS::GetClosestGraveyard(Player* player)
 {
     if (GetStatus() == STATUS_IN_PROGRESS)
-        return sGraveyard->GetGraveyard(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_MAIN_ALLIANCE : WS_GRAVEYARD_MAIN_HORDE);
+        return sWorldSafeLocsStore.LookupEntry(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_MAIN_ALLIANCE : WS_GRAVEYARD_MAIN_HORDE);
     else
-        return sGraveyard->GetGraveyard(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_FLAGROOM_ALLIANCE : WS_GRAVEYARD_FLAGROOM_HORDE);
+        return sWorldSafeLocsStore.LookupEntry(player->GetTeamId() == TEAM_ALLIANCE ? WS_GRAVEYARD_FLAGROOM_ALLIANCE : WS_GRAVEYARD_FLAGROOM_HORDE);
 }
 
 void BattlegroundWS::FillInitialWorldStates(WorldPacket& data)
