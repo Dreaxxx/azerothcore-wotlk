@@ -4,8 +4,7 @@
 
 #include "CreatureTextMgr.h"
 #include "ScriptMgr.h"
-#include "ScriptedCreature.h"
-#include "SciptedEscortAi.h" 
+#include "ScriptedCreature.h" 
 #include "SpellScript.h"
 #include "ulduar.h"
 #include "SpellAuraEffects.h"
