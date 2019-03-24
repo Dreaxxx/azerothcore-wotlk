@@ -2,8 +2,10 @@
  * Originally written by Xinef - Copyright (C) 2016+ AzerothCore <www.azerothcore.org>, released under GNU AGPL v3 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
 */
 
+#include "CreatureTextMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "SciptedEscortAi.h" 
 #include "SpellScript.h"
 #include "ulduar.h"
 #include "SpellAuraEffects.h"
@@ -67,14 +69,14 @@ enum AuriayaEvents
     EVENT_ENRAGE                        = 10,
 };
 
-enum AuriayaSounds
+enum AuriayaYells
 {
-    SOUND_AGGRO                         = 15473,
-    SOUND_SLAY1                         = 15474,
-    SOUND_SLAY2                         = 15475,
-    SOUND_DEATH                         = 15476,
-    SOUND_BERSERK                       = 15477,
-    SOUND_WOUND                         = 15478,
+    SAY_AGGRO       = 0,
+    SAY_SLAY        = 1,
+    SAY_DEATH       = 2,
+    SAY_BERSERK     = 3,
+    EMOTE_FEAR      = 4,
+    EMOTE_DEFENDER  = 5
 };
 
 enum Misc
@@ -159,7 +161,7 @@ public:
 
         void JustReachedHome() { me->setActive(false); }
 
-        void EnterCombat(Unit*  /*who*/)
+        void EnterCombat(Unit* who)
         {
             if (m_pInstance)
                 m_pInstance->SetData(TYPE_AURIAYA, IN_PROGRESS);
@@ -173,29 +175,17 @@ public:
 
             summons.DoZoneInCombat(NPC_SANCTUM_SENTRY);
 
-            me->MonsterYell("Some things are better left alone!", LANG_UNIVERSAL, 0);
-            me->PlayDirectSound(SOUND_AGGRO);
+            Talk(SAY_AGGRO);
             me->setActive(true);
         }
 
-        void KilledUnit(Unit*  /*victim*/)
+        void KilledUnit(Unit* victim)
         {
-            if (urand(0,2))
-                return;
-
-            if (urand(0,1))
-            {
-                me->MonsterYell("The secret dies with you!", LANG_UNIVERSAL, 0);
-                me->PlayDirectSound(SOUND_SLAY1);
-            }
-            else
-            {
-                me->MonsterYell("There is no escape!", LANG_UNIVERSAL, 0);
-                me->PlayDirectSound(SOUND_SLAY2);
-            }
+            if (victim->GetTypeId() == TYPEID_PLAYER)
+                Talk(SAY_SLAY);
         }
 
-        void JustDied(Unit * /*victim*/)
+        void JustDied(Unit *victim)
         {
             if (m_pInstance)
                 m_pInstance->SetData(TYPE_AURIAYA, DONE);
@@ -203,8 +193,7 @@ public:
             EntryCheckPredicate pred(NPC_FERAL_DEFENDER);
             summons.DoAction(ACTION_DESPAWN_ADDS, pred);
             summons.DespawnAll();
-            me->MonsterTextEmote("Auriaya screams in agony.", 0);
-            me->PlayDirectSound(SOUND_DEATH);
+            Talk(SAY_DEATH);
         }
 
         void DoAction(int32 param)
@@ -227,7 +216,7 @@ public:
             switch (events.GetEvent())
             {
                 case EVENT_SUMMON_FERAL_DEFENDER:
-                    me->MonsterTextEmote("Auriaya begins to activate Feral Defender.", 0, true);
+                    Talk(EMOTE_DEFENDER);
                     me->CastSpell(me, SPELL_ACTIVATE_FERAL_DEFENDER, true);
                     events.PopEvent();
                     me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, true);
@@ -238,7 +227,7 @@ public:
                     me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
                     break;
                 case EVENT_TERRIFYING_SCREECH:
-                    me->MonsterTextEmote("Auriaya begins to cast Terrifying Screech.", 0, true);
+                    Talk(EMOTE_FEAR);
                     me->CastSpell(me, SPELL_TERRIFYING_SCREECH, false);
                     events.RepeatEvent(35000);
                     break;
@@ -263,8 +252,7 @@ public:
                     break;
                 }
                 case EVENT_ENRAGE:
-                    me->MonsterTextEmote("You waste my time!", 0);
-                    me->PlayDirectSound(SOUND_BERSERK);
+                    Talk(SAY_BERSERK);
                     me->CastSpell(me, SPELL_ENRAGE, true);
                     events.PopEvent();
                     break;
@@ -464,7 +452,7 @@ class achievement_auriaya_crazy_cat_lady : public AchievementCriteriaScript
     public:
         achievement_auriaya_crazy_cat_lady() : AchievementCriteriaScript("achievement_auriaya_crazy_cat_lady") {}
 
-        bool OnCheck(Player*  /*player*/, Unit* target)
+        bool OnCheck(Player* player, Unit* target)
         {
             if (target)
                 if (InstanceScript* instance = target->GetInstanceScript())
@@ -480,7 +468,7 @@ class achievement_auriaya_nine_lives : public AchievementCriteriaScript
     public:
         achievement_auriaya_nine_lives() : AchievementCriteriaScript("achievement_auriaya_nine_lives") {}
 
-        bool OnCheck(Player*  /*player*/, Unit* target)
+        bool OnCheck(Player* player, Unit* target)
         {
             if (target)
                 if (InstanceScript* instance = target->GetInstanceScript())
