@@ -342,7 +342,7 @@ public:
                     if (Unit *pTarget = SelectTarget(SELECT_TARGET_FARTHEST, 0, 0, true))
                         me->CastSpell(pTarget, SPELL_STATIC_DISRUPTION, false);
 
-                    events.RepeatEvent(2urand(20000,40000));
+                    events.RepeatEvent(urand(20000,40000));
                     break;
                 case EVENT_OVERWHELMING_POWER:
                     Talk(SAY_STEELBREAKER_POWER);
@@ -356,7 +356,7 @@ public:
                     break;
             }
 
-        //    DoMeleeAttackIfReady();
+            // DoMeleeAttackIfReady();
         }
     };
 };
@@ -460,7 +460,7 @@ public:
             }
         }
 
-        void JustDied(Unit*  /*killer*/) override
+        void JustDied(Unit* /*killer*/) override
         {
             if (!pInstance)
                 return;
@@ -477,6 +477,7 @@ public:
                 RestoreAssemblyHealth(pInstance->GetData64(DATA_STEELBREAKER), pInstance->GetData64(DATA_BRUNDIR), me);
                 me->CastSpell(me, SPELL_SUPERCHARGE, true);
                 Talk(SAY_MOLGEIM_DEATH);
+            }
         }
 
         void KilledUnit(Unit* who) override
@@ -630,7 +631,7 @@ public:
             me->SetDisableGravity(false);
             me->SetRegeneratingHealth(true);
             me->SetReactState(REACT_AGGRESSIVE);
-           // me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
+            // me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
 
             if (pInstance)
                 pInstance->SetData(TYPE_ASSEMBLY, NOT_STARTED);
@@ -700,9 +701,10 @@ public:
                 RestoreAssemblyHealth(pInstance->GetData64(DATA_STEELBREAKER), pInstance->GetData64(DATA_MOLGEIM), me);
                 me->CastSpell(me, SPELL_SUPERCHARGE, true);
                 Talk(SAY_BRUNDIR_DEATH);
+            }
         }
 
-        void KilledUnit(Unit *who) override
+        void KilledUnit(Unit* who) override
         {
             if (who->GetTypeId() != TYPEID_PLAYER || urand(0,2))
                 return;
@@ -781,13 +783,13 @@ public:
                     break;
                 case EVENT_OVERLOAD:
                     me->ApplySpellImmune(1, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, true);
+                    Talk(EMOTE_BRUNDIR_OVERLOAD);
                     me->CastSpell(me, SPELL_OVERLOAD, true);
                     events.RescheduleEvent(EVENT_OVERLOAD, urand(25000,40000));
                     events.RescheduleEvent(EVENT_IMMUNE, 5999);
                     break;
                 case EVENT_LIGHTNING_WHIRL:
-                    me->MonsterYell("Stand still and stare into the light!", LANG_UNIVERSAL, 0);
-                    me->PlayDirectSound(SOUND_BRUNDIR_POWER);
+                    Talk(SAY_BRUNDIR_SPECIAL);
                     me->CastSpell(me, SPELL_LIGHTNING_WHIRL, true);
                     events.RepeatEvent(urand(10000,25000));
                     break;
