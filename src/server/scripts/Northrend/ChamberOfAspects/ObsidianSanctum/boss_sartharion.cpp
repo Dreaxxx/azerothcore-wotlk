@@ -376,6 +376,9 @@ public:
 
         void JustSummoned(Creature* cr)
         {
+            if (me->IsInCombat())
+                cr->SetInCombatWithZone();
+            
             if (cr->GetEntry() == NPC_FLAME_TSUNAMI)
                 cr->SetSpeed(MOVE_FLIGHT, 1.5f);
             else if (cr->GetEntry() == NPC_FIRE_CYCLONE)
