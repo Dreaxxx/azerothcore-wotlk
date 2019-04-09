@@ -42,7 +42,7 @@ class boss_patchwerk : public CreatureScript
 public:
     boss_patchwerk() : CreatureScript("boss_patchwerk") { }
 
-    CreatureAI* GetAI(Creature* pCreature) const
+    CreatureAI* GetAI(Creature* pCreature) const override
     {
         return new boss_patchwerkAI (pCreature);
     }
@@ -57,13 +57,13 @@ public:
         EventMap events;
         InstanceScript* pInstance;
 
-        void Reset()
+        void Reset() override
         {
             BossAI::Reset();
             events.Reset();
         }
 
-        void KilledUnit(Unit* who)
+        void KilledUnit(Unit* who) override
         {
             if (who->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -75,19 +75,18 @@ public:
                 pInstance->SetData(DATA_IMMORTAL_FAIL, 0);
         }
 
-        void JustDied(Unit*  killer)
+        void JustDied(Unit*  killer) override
         {
             BossAI::JustDied(killer);
             Talk(SAY_DEATH);
         }
 
-        void EnterCombat(Unit * who)
+        void EnterCombat(Unit * who) override
         {
             BossAI::EnterCombat(who);
             Talk(SAY_AGGRO);
             
             me->SetInCombatWithZone();
-            me->CallForHelp(VISIBLE_RANGE);
             events.ScheduleEvent(EVENT_SPELL_HATEFUL_STRIKE, 1200);
             events.ScheduleEvent(EVENT_SPELL_BERSERK, 360000);
             events.ScheduleEvent(EVENT_HEALTH_CHECK, 1000);
@@ -98,7 +97,7 @@ public:
             }
         }
 
-        void UpdateAI(uint32 diff)
+        void UpdateAI(uint32 diff) override
         {
             if (!UpdateVictim())
                 return;
@@ -114,7 +113,7 @@ public:
                     //Cast Hateful strike on the player with the highest
                     //amount of HP within melee distance, and second threat amount
                     std::list<Unit*> meleeRangeTargets;
-                    Unit* finalTarget = NULL;
+                    Unit* finalTarget = nullptr;
                     uint8 counter = 0;
                     
                     ThreatContainer::StorageType::const_iterator i = me->getThreatManager().getThreatList().begin();

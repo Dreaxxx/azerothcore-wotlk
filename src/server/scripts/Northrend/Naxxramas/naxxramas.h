@@ -5,7 +5,7 @@
 #ifndef DEF_NAXXRAMAS_H
 #define DEF_NAXXRAMAS_H
 
-#include "ScriptPCH.h"
+#include "SpellScript.h"
 
 enum Encouters
 {
@@ -50,6 +50,7 @@ enum NXData
     DATA_DANCE_FAIL                 = 118,
     DATA_IMMORTAL_FAIL              = 119,
     DATA_KELTHUZAD_GATE             = 120,
+    DATA_HAD_THADDIUS_GREET         = 121,
 };
 
 enum NXGOs
@@ -57,7 +58,6 @@ enum NXGOs
     GO_PATCHWERK_GATE               = 181123,
     GO_GLUTH_GATE                   = 181120,
     GO_NOTH_GATE                    = 181201,
-    GO_NOTH_ENTRENCE                = 181200,
     GO_HEIGAN_ENTERANCE_GATE        = 181202,
     GO_HEIGAN_EXIT_GATE             = 181203,
     GO_LOATHEB_GATE                 = 181241,
@@ -83,6 +83,9 @@ enum NXGOs
     GO_THADDIUS_PORTAL              = 181576, //Thadius portal
     GO_MAEXXNA_PORTAL               = 181575, //Maexxna portal
     GO_HORSEMAN_PORTAL              = 181578, //Four Horseman portal
+
+    GO_CONS_NOX_TESLA_STALAGG       = 268049,
+    GO_CONS_NOX_TESLA_FEUGEN        = 268050
 };
 
 enum NXNPCs
@@ -108,15 +111,7 @@ enum NXNPCs
     // Frogger
     NPC_LIVING_POISON               = 16027,
     NPC_NAXXRAMAS_TRIGGER           = 16082,
-    NPC_MR_BIGGLESWORTH             = 16998,
-
-    // Patchwerk
-    NPC_PATCHWERK                   = 16028,
-    NPC_PATCHWORK_GOLEM             = 16017,
-    NPC_BILE_RETCHER                = 16018,
-    NPC_MAD_SCIENTIST               = 16020,
-    NPC_LIVING_MONSTROSITY          = 16021,
-    NPC_SURGICAL_ASSIST             = 16022,
+    NPC_MR_BIGGLESWORTH             = 16998
 };
 
 enum NXMisc
@@ -126,7 +121,11 @@ enum NXMisc
     SPELL_FROGGER_EXPLODE           = 28433,
 
     // Actions
-    ACTION_SAPPHIRON_BIRTH          = 1
+    ACTION_SAPPHIRON_BIRTH          = 1,
+
+    // Sounds
+    // Background screams in instance if Thaddius still alive, four of them from 8873 to 8876
+    SOUND_SCREAM                    = 8873
 };
 
 enum NXSays
@@ -141,4 +140,3 @@ enum NXSays
 };
 
 #endif
-

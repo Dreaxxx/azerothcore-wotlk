@@ -40,7 +40,7 @@ class instance_naxxramas : public InstanceMapScript
 public:
     instance_naxxramas() : InstanceMapScript("instance_naxxramas", 533) { }
 
-    InstanceScript* GetInstanceScript(InstanceMap* pMap) const
+    InstanceScript* GetInstanceScript(InstanceMap* pMap) const override
     {
         return new instance_naxxramas_InstanceMapScript(pMap);
     }
@@ -57,7 +57,6 @@ public:
             _patchwerkGateGUID = 0;
             _gluthGateGUID = 0;
             _nothGateGUID = 0;
-            _nothEntrenceGateGUID = 0;
             _heiganGateGUID = 0;
             _heiganGateExitGUID = 0;
             _loathebGateGUID = 0;
@@ -76,7 +75,6 @@ public:
             _thaddiusPortalGUID = 0;
 
             // NPCs
-            _patchwerkGUID = 0;
             _thaddiusGUID = 0;
             _stalaggGUID = 0;
             _feugenGUID = 0;
@@ -92,6 +90,8 @@ public:
             _horsemanKilled = 0;
             _speakTimer = 0;
             _horsemanTimer = 0;
+            _screamTimer = 2 * MINUTE * IN_MILLISECONDS;
+            _hadThaddiusGreet = false;
 
             // Achievements
             abominationsKilled = 0;
@@ -109,7 +109,6 @@ public:
         uint64 _patchwerkGateGUID;
         uint64 _gluthGateGUID;
         uint64 _nothGateGUID;
-        uint64 _nothEntrenceGateGUID;
         uint64 _heiganGateGUID;
         uint64 _heiganGateExitGUID;
         uint64 _loathebGateGUID;
@@ -131,8 +130,6 @@ public:
         uint64 _thaddiusPortalGUID;
 
         // NPCs
-        std::list<uint64> PatchwerkRoomTrash;
-        uint64 _patchwerkGUID;
         uint64 _thaddiusGUID;
         uint64 _stalaggGUID;
         uint64 _feugenGUID;
@@ -148,6 +145,8 @@ public:
         uint8 _horsemanKilled;
         uint32 _speakTimer;
         uint32 _horsemanTimer;
+        uint32 _screamTimer;
+        bool _hadThaddiusGreet;
 
         // Achievements
         uint8 abominationsKilled;
@@ -168,7 +167,7 @@ public:
                 for (std::set<GameObject*>::iterator itr = HeiganEruption[i].begin(); itr != HeiganEruption[i].end(); ++itr)
                 {
                     (*itr)->SendCustomAnim((*itr)->GetGoAnimProgress());
-                    (*itr)->CastSpell(NULL, SPELL_ERUPTION);
+                    (*itr)->CastSpell(nullptr, SPELL_ERUPTION);
                 }
             }
         }
@@ -187,9 +186,6 @@ public:
         {
             switch(creature->GetEntry())
             {
-                case NPC_PATCHWERK:
-                    _patchwerkGUID = creature->GetGUID();
-                    return;
                 case NPC_THADDIUS:
                     _thaddiusGUID = creature->GetGUID();
                     return;
@@ -220,22 +216,6 @@ public:
                 case NPC_LICH_KING:
                     _lichkingGUID = creature->GetGUID();
                     return;
-                case NPC_PATCHWORK_GOLEM:
-                    PatchwerkRoomTrash.push_back(creature->GetGUID());
-                    return;
-                case NPC_BILE_RETCHER:
-                    if (creature->GetPositionY() > -3258.0f) // we want only those inside the room, not before
-                        PatchwerkRoomTrash.push_back(creature->GetGUID());
-                    return;
-                case NPC_MAD_SCIENTIST:
-                    PatchwerkRoomTrash.push_back(creature->GetGUID());
-                    return;
-                case NPC_LIVING_MONSTROSITY:
-                    PatchwerkRoomTrash.push_back(creature->GetGUID());
-                    return;
-                case NPC_SURGICAL_ASSIST:
-                    PatchwerkRoomTrash.push_back(creature->GetGUID());
-                    return;
             }
         }
 
@@ -262,13 +242,6 @@ public:
                 case GO_NOTH_GATE:
                     _nothGateGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_NOTH) == DONE)
-                        pGo->SetGoState(GO_STATE_ACTIVE);
-                    break;
-                case GO_NOTH_ENTRENCE:
-                    _nothEntrenceGateGUID = pGo->GetGUID();
-                    if (GetBossState(BOSS_NOTH) == IN_PROGRESS)
-                        pGo->SetGoState(GO_STATE_READY);
-                    else
                         pGo->SetGoState(GO_STATE_ACTIVE);
                     break;
                 case GO_HEIGAN_ENTERANCE_GATE:
@@ -308,11 +281,7 @@ public:
                     break;
                 case GO_THADDIUS_GATE:
                     _thaddiusGateGUID = pGo->GetGUID();
-                    if (GetBossState(BOSS_GLUTH) != DONE) // gluth is correct
-                        pGo->SetGoState(GO_STATE_READY);
-                    else if (GetBossState(BOSS_THADDIUS) == IN_PROGRESS)
-                        pGo->SetGoState(GO_STATE_READY);
-                    else
+                    if (GetBossState(BOSS_GLUTH) == DONE) // gluth is correct
                         pGo->SetGoState(GO_STATE_ACTIVE);
                     break;
                 case GO_GOTHIK_ENTER_GATE:
@@ -336,9 +305,9 @@ public:
                     break;
                 case GO_KELTHUZAD_GATE:
                     _kelthuzadgateGUID = pGo->GetGUID();
-                    if(GetBossState(BOSS_SAPPHIRON) == DONE && _speakTimer==0)
+                    if (GetBossState(BOSS_SAPPHIRON) == DONE && _speakTimer==0)
                         pGo->SetGoState(GO_STATE_ACTIVE);
-                    break;
+                   break;
                 case GO_SAPPHIRON_GATE:
                     _sapphironGateGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_SAPPHIRON) == DONE)
@@ -463,23 +432,23 @@ public:
                 case DATA_HEIGAN_ERUPTION:
                     HeiganEruptSections(data);
                     return;
+                case DATA_HAD_THADDIUS_GREET:
+                    _hadThaddiusGreet = (data == 1);
             }
+        }
+
+        uint32 GetData(uint32 id) const override
+        {
+            switch (id)
+            {
+                case DATA_HAD_THADDIUS_GREET:
+                    return _hadThaddiusGreet ? 1 : 0;
+            }
+            return 0;
         }
         
         bool SetBossState(uint32 bossId, EncounterState state) override
         {
-            // pull all the trash if not killed
-            if (bossId == BOSS_PATCHWERK)
-                if (state == IN_PROGRESS)
-                    if (Creature* patch = instance->GetCreature(_patchwerkGUID))
-                        if (!PatchwerkRoomTrash.empty())
-                            for (std::list<uint64>::iterator itr = PatchwerkRoomTrash.begin(); itr != PatchwerkRoomTrash.end(); ++itr)
-                            {
-                                Creature* trash = ObjectAccessor::GetCreature(*patch, *itr); // maybe delete pointer after attack started?
-                                if (trash && trash->IsAlive() && !trash->IsInCombat())
-                                    trash->AI()->AttackStart(patch->GetVictim());                                
-                            }
-
             // Horseman handling
             if (bossId == BOSS_HORSEMAN)
             {
@@ -571,7 +540,8 @@ public:
                         heiganAchievement = true;
                     break;
                 case BOSS_SAPPHIRON:
-                    if (state == DONE){
+                    if (state == DONE)
+                    {
                         _speakTimer = 1;
                         // Load KT's grid so he can talk
                         instance->LoadGrid(3763.43f, -5115.87f);
@@ -675,7 +645,7 @@ public:
                     kel->AI()->Talk(SAY_SAPP_DIALOG1);
                     _speakTimer = 20000;
                 }
-                else if (_speakTimer > 30000 && _speakTimer < 20000)
+                else if (_speakTimer > 30000 && _speakTimer < 40000)
                 {
                     lich->AI()->Talk(SAY_SAPP_DIALOG2_LICH);
                     _speakTimer = 40000;
@@ -702,6 +672,17 @@ public:
                     if (GameObject* go = instance->GetGameObject(_kelthuzadgateGUID))
                         go->SetGoState(GO_STATE_ACTIVE);
                 }
+            }
+
+            if (_screamTimer && GetBossState(BOSS_THADDIUS) != DONE)
+            {
+                if (_screamTimer <= diff)
+                {
+                    instance->PlayDirectSoundToMap(SOUND_SCREAM + urand(0, 3));
+                    _screamTimer = (2 * MINUTE + urand(0, 30)) * IN_MILLISECONDS;
+                }
+                else
+                    _screamTimer -= diff;
             }
 
             // And They would all
@@ -797,7 +778,7 @@ class boss_naxxramas_misc : public CreatureScript
 public:
     boss_naxxramas_misc() : CreatureScript("boss_naxxramas_misc") { }
 
-    CreatureAI* GetAI(Creature* pCreature) const
+    CreatureAI* GetAI(Creature* pCreature) const override
     {
         return new boss_naxxramas_miscAI (pCreature);
     }
@@ -811,7 +792,7 @@ public:
 
         uint32 timer;
 
-        void JustDied(Unit* )
+        void JustDied(Unit* ) override
         {
             if (me->GetEntry() == NPC_MR_BIGGLESWORTH && me->GetInstanceScript())
             {
@@ -823,7 +804,7 @@ public:
             }
         }
 
-        void UpdateAI(uint32 diff)
+        void UpdateAI(uint32 diff) override
         {
             if (me->GetEntry() == NPC_NAXXRAMAS_TRIGGER)
             {
@@ -840,7 +821,7 @@ public:
             }
             else if (me->GetEntry() == NPC_LIVING_POISON)
             {
-                Unit* target = NULL;
+                Unit* target = nullptr;
                 Trinity::AnyUnfriendlyUnitInObjectRangeCheck u_check(me, me, 0.5f);
                 Trinity::UnitLastSearcher<Trinity::AnyUnfriendlyUnitInObjectRangeCheck> searcher(me, target, u_check);
                 me->VisitNearbyObject(1.5f, searcher);
