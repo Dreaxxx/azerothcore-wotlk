@@ -192,7 +192,7 @@ public:
             RescheduleEvents(); // Other events are scheduled here
 
             me->setActive(true);
-            me->MonsterYell("New toys? For me? I promise I won't break them this time!", LANG_UNIVERSAL, 0);
+            me->MonsterYell("Nouveaux jouets? Pour moi? Je promets que je ne les briserai pas cette fois!", LANG_UNIVERSAL, 0);
             me->PlayDirectSound(XT_SOUND_AGGRO);
 
             if (m_pInstance)
@@ -214,12 +214,12 @@ public:
             {
                 if (urand(0,1))
                 {
-                    me->MonsterYell("I... I think I broke it.", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Je ... je pense que je l'ai cassé.", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(XT_SOUND_SLAY1);
                 }
                 else
                 {
-                    me->MonsterYell("I guess it doesn't bend that way.", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Je suppose que cela ne se plie pas de cette façon.", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(XT_SOUND_SLAY2);
                 }
             }
@@ -227,7 +227,7 @@ public:
 
         void JustDied(Unit * /*victim*/)
         {
-            me->MonsterYell("You are bad... Toys... Very... Baaaaad!", LANG_UNIVERSAL, 0);
+            me->MonsterYell("Vous êtes mauvais ... Jouets ... Très ... Maaaaaaauvais!", LANG_UNIVERSAL, 0);
             me->PlayDirectSound(XT_SOUND_DEATH);
 
             if (m_pInstance)
@@ -268,7 +268,7 @@ public:
 
                 me->CastSpell(me, SPELL_HEARTBREAK, true);
                 
-                me->MonsterTextEmote("XT-002 Deconstructor's heart is severed from his body.", 0, true);
+                me->MonsterTextEmote("Le cœur de XT-002 Deconstructor est séparé de son corps.", 0, true);
                 events.ScheduleEvent(EVENT_REMOVE_EMOTE, 4000);
                 return;
             }
@@ -319,7 +319,7 @@ public:
                         me->SetControlled(true, UNIT_STATE_STUNNED);
                         me->SetByteValue(UNIT_FIELD_BYTES_1, 0, UNIT_STAND_STATE_SUBMERGED); // submerge with animation
 
-                        me->MonsterYell("So tired. I will rest for just a moment!", LANG_UNIVERSAL, 0);
+                        me->MonsterYell("Tellement fatigué. Je vais me reposer un instant!", LANG_UNIVERSAL, 0);
                         me->PlayDirectSound(XT_SOUND_HEART_OPEN);
 
                         events.CancelEventGroup(1);
@@ -347,14 +347,14 @@ public:
                     events.ScheduleEvent(EVENT_GRAVITY_BOMB, 10000, 1);
                     break;
                 case EVENT_TYMPANIC_TANTARUM:
-                    me->MonsterTextEmote("XT-002 Deconstructor begins to cause the earth to quake.", 0, true);
+                    me->MonsterTextEmote("Le déconstructeur XT-002 commence à faire trembler la terre", 0, true);
                     me->MonsterYell("NO! NO! NO! NO! NO!", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(XT_SOUND_TANTARUM);
                     me->CastSpell(me, SPELL_TYMPANIC_TANTARUM, true);
                     events.RepeatEvent(60000);
                     return;
                 case EVENT_ENRAGE:
-                    me->MonsterYell("I'm tired of these toys. I don't want to play anymore!", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("J'en ai marre de ces jouets. Je ne veux plus jouer!", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(XT_SOUND_SUMMON);
                     me->CastSpell(me, SPELL_XT002_ENRAGE, true);
                     events.PopEvent();
@@ -362,7 +362,7 @@ public:
 
                 // Animation events
                 case EVENT_START_SECOND_PHASE:
-                    me->MonsterTextEmote("XT-002 Deconstructor's heart is exposed and leaking energy.", 0, true);
+                    me->MonsterTextEmote("Le cœur du Déconstructeur XT-002 est exposé et laisse échapper de l'énergie.", 0, true);
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                     if (Unit* heart = me->GetVehicleKit() ? me->GetVehicleKit()->GetPassenger(HEART_VEHICLE_SEAT) : NULL)
                         heart->GetAI()->DoAction(ACTION_AWAKEN_HEART);
@@ -378,7 +378,7 @@ public:
                         return;
                     }
 
-                    me->MonsterYell("I'm ready to play!", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Je suis prêt à jouer !", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(XT_SOUND_HEART_CLOSED);
                     
                     me->SetByteValue(UNIT_FIELD_BYTES_1, 0, UNIT_STAND_STATE_STAND); // emerge
@@ -617,7 +617,7 @@ public:
                     }
 
                     if (!urand(0,2))
-                        me->MonsterTextEmote("XT-002 Deconstructor consumes scrap bot to repair himself.", 0, true);
+                        me->MonsterTextEmote("Le déconstructeur XT-002 consomme des déchets pour se réparer.", 0, true);
                     
                     me->DespawnOrUnsummon(1);
                 }

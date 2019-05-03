@@ -448,7 +448,7 @@ public:
             events.ScheduleEvent(EVENT_SARA_P1_SUMMON, 0, 0, EVENT_PHASE_ONE);
             events.SetPhase(EVENT_PHASE_ONE);
 
-            me->MonsterYell("The time to strike at the head of the beast will soon be upon us! Focus your anger and hatred on his minions!", LANG_UNIVERSAL, 0);
+            me->MonsterYell("Le temps de frapper la tête de la bête sera bientôt là! Concentrez votre colère et votre haine sur ses mains!", LANG_UNIVERSAL, 0);
             me->PlayDirectSound(SARA_AGGRO);
             me->setActive(true);
         }
@@ -549,12 +549,12 @@ public:
 
             if (urand(0,1))
             {
-                me->MonsterYell(_secondPhase ? "Tremble, mortals, before the coming of the end!" : "Yes! YES! Show them no mercy! Give no pause to your attacks!", LANG_UNIVERSAL, 0);
+                me->MonsterYell(_secondPhase ? "Tremblez, mortels, avant la fin de la journée! ":" Oui! OUI! Ne leur montre aucune pitié! Ne faites pas de pause à vos attaques!", LANG_UNIVERSAL, 0);
                 me->PlayDirectSound(_secondPhase ? SARA_P2_CAST2 : SARA_P1_CAST1);
             }
             else
             {
-                me->MonsterYell(_secondPhase ? "Suffocate upon your own hate!" : "Let hatred and rage guide your blows!", LANG_UNIVERSAL, 0);
+                me->MonsterYell(_secondPhase ? "Suffociez sur votre propre haine! ":" Laissez la haine et la rage guider vos coups!", LANG_UNIVERSAL, 0);
                 me->PlayDirectSound(_secondPhase ? SARA_P2_CAST1 : SARA_P1_CAST2);
             }
         }
@@ -566,12 +566,12 @@ public:
 
             if (urand(0,1))
             {
-                me->MonsterYell("Could they have been saved?", LANG_UNIVERSAL, 0);
+                me->MonsterYell("Ont-ils pu être sauvés?", LANG_UNIVERSAL, 0);
                 me->PlayDirectSound(SARA_P1_KILL2);
             }
             else
             {
-                me->MonsterYell("Powerless to act...", LANG_UNIVERSAL, 0);
+                me->MonsterYell("Impuissant d'agir ...", LANG_UNIVERSAL, 0);
                 me->PlayDirectSound(SARA_P1_KILL1);
             }
         }
@@ -641,7 +641,7 @@ public:
 
             // Illusion shatters (param - stun time)
             WorldPacket data;
-            ChatHandler::BuildChatPacket(data, CHAT_MSG_RAID_BOSS_EMOTE, LANG_UNIVERSAL, me, NULL, "Illusion shatters and a path to the central chamber opens!");
+            ChatHandler::BuildChatPacket(data, CHAT_MSG_RAID_BOSS_EMOTE, LANG_UNIVERSAL, me, NULL, "L'illusion se brise et un chemin mène à la chambre centrale!");
             me->SendMessageToSetInRange(&data, 500, false);
 
             uint32 timer = events.GetNextEventTime(EVENT_SARA_P2_OPEN_PORTALS);
@@ -671,7 +671,7 @@ public:
                         cr->SetVisible(false);
 
                     _p2TalkTimer++;
-                    me->MonsterYell("I am the lucid dream.", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Je suis le rêve lucide.", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(SARA_P2_START);
                 }
                 return;
@@ -712,18 +712,18 @@ public:
                 {
                     EntryCheckPredicate pred(NPC_OMINOUS_CLOUD);
                     summons.DoAction(ACTION_UNSUMMON_CLOUDS, pred);
-                    me->MonsterYell("The monster in your nightmares.", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Le monstre dans tes cauchemars.", LANG_UNIVERSAL, 0);
                     _p2TalkTimer = 20000;
                 }
                 else if (_p2TalkTimer >= 25000 && _p2TalkTimer < 40000)
                 {
                     summons.DespawnEntry(NPC_OMINOUS_CLOUD);
-                    me->MonsterYell("The fiend of a thousand faces.", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Le démon aux mille visages.", LANG_UNIVERSAL, 0);
                     _p2TalkTimer = 40000;
                 }
                 else if (_p2TalkTimer >= 44500 && _p2TalkTimer < 60000)
                 {
-                    me->MonsterYell("Cower before my true form.", LANG_UNIVERSAL, 0);
+                    me->MonsterYell("Courrez devant ma forme véritable.", LANG_UNIVERSAL, 0);
                     _p2TalkTimer = 60000;           
                 }
                 else if (_p2TalkTimer >= 64000)
@@ -1049,7 +1049,7 @@ public:
             summons.DespawnAll();
             events.Reset();
             
-            me->MonsterYell("Your fate is sealed. The end of days is finally upon you and ALL who inhabit this miserable little seedling. Uulwi ifis halahs gag erh'ongg w'ssh.", LANG_UNIVERSAL, 0);
+            me->MonsterYell("Votre destin est scellé. La fin des jours est enfin sur vous et TOUS qui habitent cette misérable petite planète. Uulwi ifis halahs gag erh'ongg w'ssh.", LANG_UNIVERSAL, 0);
             me->PlayDirectSound(YS_P3_DEATH);
 
             if (m_pInstance)
@@ -1086,11 +1086,11 @@ public:
             }
             else if (param == ACTION_YOGG_SARON_START_YELL)
             {
-                me->MonsterYell("BOW DOWN BEFORE THE GOD OF DEATH!", LANG_UNIVERSAL, 0);
+                me->MonsterYell("BOW DOWN AVANT LE DIEU DE LA MORT!", LANG_UNIVERSAL, 0);
             }
             else if (param == ACTION_YOGG_SARON_OPEN_PORTAL_YELL)
             {
-                me->MonsterYell("MADNESS WILL CONSUME YOU!", LANG_UNIVERSAL, 0);
+                me->MonsterYell("LA FOLIE VOUS CONSUME!", LANG_UNIVERSAL, 0);
                 me->PlayDirectSound(YS_OPEN_PORTALS);
             }
             else if (param == ACTION_YOGG_SARON_START_P3)
@@ -1105,7 +1105,7 @@ public:
                 events.ScheduleEvent(EVENT_YS_SUMMON_GUARDIAN, 0);
                 _thirdPhase = true;
 
-                me->MonsterYell("Look upon the true face of death and know that your end comes soon!", LANG_UNIVERSAL, 0);
+                me->MonsterYell("Regardez le vrai visage de la mort et sachez que votre fin arrive bientôt!", LANG_UNIVERSAL, 0);
                 me->PlayDirectSound(YS_P3_START);
             }
             else if (param == ACTION_YOGG_SARON_HARD_MODE)
@@ -1157,8 +1157,8 @@ public:
                     events.RepeatEvent(12000);
                     break;
                 case EVENT_YS_DEAFENING_ROAR:
-                    me->MonsterTextEmote("Yogg-Saron opens his mouth wide!", 0, true);
-                    me->MonsterYell("Eternal suffering awaits!", LANG_UNIVERSAL, 0);
+                    me->MonsterTextEmote("Yogg-Saron ouvre grand la bouche!", 0, true);
+                    me->MonsterYell("La souffrance éternelle attend!", LANG_UNIVERSAL, 0);
                     me->PlayDirectSound(YS_P3_DEAFENING_ROAR);
                     me->CastSpell(me, SPELL_DEAFENING_ROAR, false);
                     events.RepeatEvent(50000);
@@ -1589,7 +1589,7 @@ public:
 
         Unit* SelectConstrictTarget()
         {
-            Player *target = NULL;
+            Player *target = SelectTargetFromPlayerList(25);
             Map::PlayerList const& pList = me->GetMap()->GetPlayers();
             uint8 num = urand(0, pList.getSize()-1);
             uint8 count = 0;
@@ -1920,7 +1920,7 @@ public:
                     case 1:
                         if (Creature* cr = me->FindNearestCreature(NPC_IMMOLATED_CHAMPION, 50))
                             _championGUID = cr->GetGUID();
-                        Say("Your resilience is admirable.", 0, false, LK_1);
+                        Say("Votre résilience est admirable.", 0, false, LK_1);
                         NextStep(7000);
                         break;
                     case 2:
@@ -1928,11 +1928,11 @@ public:
                         NextStep(6000);
                         break;
                     case 3:
-                        Say("I'm not afraid of you!", _championGUID, false, IC_2);
+                        Say("Vous ne m'éffrayez pas !", _championGUID, false, IC_2);
                         NextStep(6500);
                         break;
                     case 4:
-                        Say("I will break you as I broke him.", 0, false, LK_2);
+                        Say("Je vais te briser comme je l'ai brisé.", 0, false, LK_2);
                         NextStep(7500);
                         break;
                     case 5:
@@ -1940,7 +1940,7 @@ public:
                         NextStep(5000);
                         break;
                     case 6:
-                        Say("He will learn... no king rules forever; only death is eternal!", _yoggGUID, false, YS_V3_2);
+                        Say("Il va apprendre ... aucun roi ne règne pour toujours; seule la mort est éternelle!", _yoggGUID, false, YS_V3_2);
                         _running = false;
                         break;
                 }
@@ -2035,7 +2035,7 @@ public:
                     case 1:
                         if (Creature* cr = me->FindNearestCreature(NPC_GARONA, 50))
                             _garonaGUID = cr->GetGUID();
-                        Say("Bad news sire. The clans are united under Blackhand in this assault. They will stand together until Stormwind has fallen.", _garonaGUID, false, GAR_1);
+                        Say("Mauvaise nouvelle sire. Les clans sont unis sous Blackhand dans cet assaut. Ils resteront ensemble jusqu'à ce que Hurlevent soit tombé.", _garonaGUID, false, GAR_1);
                         NextStep(2000);
                         break;
                     case 2:
@@ -2043,11 +2043,11 @@ public:
                         NextStep(6500);
                         break;
                     case 3:
-                        Say("Gul'dan is bringing up his warlocks by nightfall. Until then, the Blackrock clan will be trying to take the Eastern Wall.", _garonaGUID, false, GAR_3);
+                        Say("Gul'dan élève ses sorciers à la tombée de la nuit. Jusque-là, le clan Blackrock tentera de prendre le mur est.", _garonaGUID, false, GAR_3);
                         NextStep(11000);
                         break;
                     case 4:
-                        Say("A thousand deaths... or one murder.", _yoggGUID, false, YS_V1_1);
+                        Say("Mille morts ... ou un meurtre.", _yoggGUID, false, YS_V1_1);
                         NextStep(2500);
                         break;
                     case 5:
@@ -2055,15 +2055,15 @@ public:
                         NextStep(2500);
                         break;
                     case 6:
-                        Say("We will hold until the reinforcements come. As long as men with stout hearts are manning the walls and throne Stormwind will hold.", 0, false, LL_1);
+                        Say("Nous allons tenir jusqu'à ce que les renforts arrivent. Tant que des hommes au cœur corpulent garderont les murs et le trône de Stormwind.", 0, false, LL_1);
                         NextStep(10000);
                         break;
                     case 7:
-                        Say("The orc leaders agree with your assessment.", _garonaGUID, false, GAR_4);
+                        Say("Les chefs orcs sont d'accord avec votre évaluation.", _garonaGUID, false, GAR_4);
                         NextStep(5000);
                         break;
                     case 8:
-                        Say("Your petty quarrels only make me stronger!", _yoggGUID, false, YS_V1_3);
+                        Say("Vos petites querelles ne me rendent que plus fort!", _yoggGUID, false, YS_V1_3);
                         _running = false;
                         break;
                 }
@@ -2153,25 +2153,25 @@ public:
                         NextStep(5000);
                         break;
                     case 1:
-                        Say("It is done... All have been given that which must be given. I now seal the Dragon Soul forever...", 0, false, NEL_1);
+                        Say("C'est fait ... Tous ont reçu ce qui doit être donné. Je scelle maintenant l'âme du dragon pour toujours ..", 0, false, NEL_1);
                         NextStep(10000);
                         break;
                     case 2:
                         if (Creature* cr = me->FindNearestCreature(NPC_YSERA, 50))
-                            Say("That terrible glow... should that be?", cr->GetGUID(), false, YSE_1);
+                            Say("Cette terrible lueur ... devrait-il en être ainsi?", cr->GetGUID(), false, YSE_1);
                         NextStep(4000);
                         break;
                     case 3:
-                        Say("For it to be as it must, yes.", 0, false, NEL_2);
+                        Say("Pour qu'il soit comme il faut, oui.", 0, false, NEL_2);
                         NextStep(4000);
                         break;
                     case 4:
                         if (Creature* cr = me->FindNearestCreature(NPC_MALYGOS, 50))
-                            Say("It is a weapon like no other. It must be like no other.", cr->GetGUID(), false, MAL_1);
+                            Say("C'est une arme pas comme les autres. Ce ne doit pas être comme les autres.", cr->GetGUID(), false, MAL_1);
                         NextStep(8000);
                         break;
                     case 5:
-                        Say("His brood learned their lesson before too long, you shall soon learn yours!", _yoggGUID, false, YS_V2_1);
+                        Say("Sa progéniture a appris leur leçon avant trop longtemps, vous apprendrez bientôt la vôtre!", _yoggGUID, false, YS_V2_1);
                         _running = false;
                         break;
                 }
@@ -2234,7 +2234,7 @@ public:
                     if (Player* player = ObjectAccessor::GetPlayer(*me, _guid))
                     {
                         me->PlayDirectSound(15760, player);
-                        me->MonsterWhisper("Destroy them minion, your master commands it!", player, false);
+                        me->MonsterWhisper("Détruisez-les sbires, votre maître le commande!", player, false);
                     }
                     break;
                 }
@@ -2589,7 +2589,7 @@ class spell_yogg_saron_insane_periodic_trigger : public SpellScriptLoader
 
                 Unit* caster = GetCaster();
                 caster->PlayDirectSound(VOYS_INSANE1, target);
-                caster->MonsterWhisper("Your will is no longer you own...", target, false);
+                caster->MonsterWhisper("Votre volonté ne vous appartient plus ...", target, false);
                 caster->CastSpell(target, SPELL_INSANE1, true);
                 target->CastSpell(target, SPELL_INSANE2, true);
             }

@@ -61,14 +61,14 @@
 #define GO_HARPOON_GUN_4                    194543
 #define GO_BROKEN_HARPOON                   194565
 
-#define TEXT_GOSSIP_ACTION                  "We are ready to help!"
-#define TEXT_EE_AGGRO                       "Give us a moment to prepare to build the turrets."
-#define TEXT_EE_MOVE_OUT                    "Ready to move out, keep those dwarves off of our backs!"
-#define TEXT_EE_FIRES_OUT                   "Fires out! Let's rebuild those turrets!"
+#define TEXT_GOSSIP_ACTION                  "Nous sommes prêts à aider!"
+#define TEXT_EE_AGGRO                       "Donnez-nous un moment pour préparer la construction des tourelles."
+#define TEXT_EE_MOVE_OUT                    "Prêt à partir, gardez ces nains hors de notre dos!"
+#define TEXT_EE_FIRES_OUT                   "Se déclenche! Reconstruisons ces tourelles!"
 
-#define TEXT_TURRET_READY                   "Harpoon Turret is ready for use!"
-#define TEXT_DEEP_BREATH                    "Razorscale takes a deep breath..."
-#define TEXT_GROUNDED_PERMANENTLY           "Razorscale grounded permanently!"
+#define TEXT_TURRET_READY                   "La tourelle de harpon est prête à l'emploi!"
+#define TEXT_DEEP_BREATH                    "Razorscale prend une profonde respiration ..."
+#define TEXT_GROUNDED_PERMANENTLY           "Razorscale mis à la terre en permanence!"
 
 
 #define CORDS_GROUND                        588.0f, -166.0f, 391.1f

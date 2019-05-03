@@ -237,25 +237,25 @@ enum SOUNDS
 #define SPELL_FROST_BOMB_EXPLOSION                  RAID_MODE(SPELL_FROST_BOMB_EXPLOSION_10, SPELL_FROST_BOMB_EXPLOSION_25)
 
 
-#define TEXT_AGGRO                                  "Oh, my! I wasn't expecting company! The workshop is such a mess! How embarrassing!"
-#define TEXT_BERSERK                                "Oh, my! It would seem that we are out of time, my friends!"
-#define TEXT_HARDMODE                               "Now why would you go and do something like that? Didn't you see the sign that said 'DO NOT PUSH THIS BUTTON!'? How will we finish testing with the self-destruct mechanism active?"
-#define TEXT_LMK2_ACTIVATE                          "We haven't much time, friends! You're going to help me test out my latest and greatest creation. Now, before you change your minds, remember, that you kind of owe it to me after the mess you made with the XT-002."
+#define TEXT_AGGRO                                  "Oh mon! Je n'attendais pas de compagnie! L'atelier est un tel désordre! Que c'est embarrassant!"
+#define TEXT_BERSERK                                "Oh mon! Il semblerait que notre temps soit écoulé, mes amis!"
+#define TEXT_HARDMODE                               "Maintenant, pourquoi irais-tu faire quelque chose comme ça? Vous n'avez pas vu le panneau qui dit \"NE PAS APPUYER SUR CE BOUTON!\"? Comment allons-nous terminer les tests avec le mécanisme d'autodestruction actif?"
+#define TEXT_LMK2_ACTIVATE                          "Nous n'avons pas beaucoup de temps, amis! Vous allez m'aider à tester ma dernière et plus grande création. Avant de changer d'avis, rappelez-vous que vous me le devez en quelque sorte après les dégâts causés par le XT-002."
 #define TEXT_LMK2_SLAIN_1                           "MEDIC!"
-#define TEXT_LMK2_SLAIN_2                           "I can fix that... or, maybe not! Sheesh, what a mess..."
-#define TEXT_LMK2_DEATH                             "WONDERFUL! Positively marvelous results! Hull integrity at 98.9 percent! Barely a dent! Moving right along."
-#define TEXT_VX001_ACTIVATE                         "Behold the VX-001 Anti-personnel Assault Cannon! You might want to take cover."
-#define TEXT_VX001_SLAIN_1                          "Fascinating. I think they call that a \"clean kill\"."
-#define TEXT_VX001_SLAIN_2                          "Note to self: Cannon highly effective against flesh."
-#define TEXT_VX001_DEATH                            "Thank you, friends! Your efforts have yielded some fantastic data! Now, where did I put-- oh, there it is!"
-#define TEXT_ACU_ACTIVATE                           "Isn't it beautiful? I call it the magnificent aerial command unit!"
-#define TEXT_ACU_SLAIN_1                            "Outplayed!"
-#define TEXT_ACU_SLAIN_2                            "You can do better than that!"
-#define TEXT_ACU_DEATH                              "Preliminary testing phase complete. Now comes the true test!!"
-#define TEXT_VOLTRON_ACTIVATE                       "Gaze upon its magnificence! Bask in its glorious, um, glory! I present you... V-07-TR-0N!"
-#define TEXT_VOLTRON_SLAIN_1                        "Prognosis: Negative!"
-#define TEXT_VOLTRON_SLAIN_2                        "You're not going to get up from that one, friend."
-#define TEXT_VOLTRON_DEATH                          "It would appear that I've made a slight miscalculation. I allowed my mind to be corrupted by the fiend in the prison, overriding my primary directive. All systems seem to be functional now. Clear."
+#define TEXT_LMK2_SLAIN_2                           "Je peux réparer ça ... ou peut-être pas! Sheesh, quel gâchis ..."
+#define TEXT_LMK2_DEATH                             "MERVEILLEUX! Résultats positivement merveilleux! Intégrité de la coque à 98,9 pourcent! À peine une bosse! Aller de l'avant."
+#define TEXT_VX001_ACTIVATE                         "Voici le canon d'assaut anti-personnel VX-001! Vous voudrez peut-être vous mettre à l'abri."
+#define TEXT_VX001_SLAIN_1                          "Fascinant. Je pense qu’ils appellent cela une \"tuerie propre\"."
+#define TEXT_VX001_SLAIN_2                          "Note à moi-même: Canon très efficace contre la chair."
+#define TEXT_VX001_DEATH                            "Merci mes amis! Vos efforts ont produit des données fantastiques! Maintenant, où est-ce que j'ai mis-- oh, voilà!"
+#define TEXT_ACU_ACTIVATE                           "N'est-ce pas beau? Je l'appelle la magnifique unité de commande aérienne!"
+#define TEXT_ACU_SLAIN_1                            "Battu !"
+#define TEXT_ACU_SLAIN_2                            "Tu peux faire mieux que ça!"
+#define TEXT_ACU_DEATH                              "La phase de test préliminaire est terminée. Maintenant vient le vrai test !!"
+#define TEXT_VOLTRON_ACTIVATE                       "Admirez sa magnificence! Imprégnez-vous de sa gloire, euh, gloire! Je vous présente ... V-07-TR-0N!"
+#define TEXT_VOLTRON_SLAIN_1                        "Pronostic: Négatif!"
+#define TEXT_VOLTRON_SLAIN_2                        "Tu ne vas pas te lever de celui-là, ami."
+#define TEXT_VOLTRON_DEATH                          "Il semblerait que j’ai fait une légère erreur de calcul. J'ai permis à mon esprit d'être corrompu par le démon dans la prison, annulant ma directive principale. Tous les systèmes semblent être fonctionnels maintenant. Clair."
 
 enum ComputerTalks
 {
@@ -1179,7 +1179,7 @@ public:
                 case EVENT_SPELL_PLASMA_BLAST:
                     if (Unit* victim = me->GetVictim())
                     {
-                        me->MonsterTextEmote("Leviathan Mk II begins to cast Plasma Blast!", 0, true);
+                        me->MonsterTextEmote("Leviathan Mk II commence à lancer Plasma Blast!", 0, true);
                         cannon->CastSpell(victim, SPELL_PLASMA_BLAST, false);
                     }
                     events.RepeatEvent(22000);

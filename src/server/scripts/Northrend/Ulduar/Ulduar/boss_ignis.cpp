@@ -43,16 +43,16 @@
 #define NPC_SCORCHED_GROUND             33123
 #define NPC_WATER_TRIGGER               22515
 
-#define TEXT_AGGRO                      "Insolent whelps! Your blood will temper the weapons used to reclaim this world!"
-#define TEXT_ACTIVATE_CONSTRUCT         "Arise, soldiers of the Iron Crucible! The Makers' will be done!"
-#define TEXT_SCORCH_1                   "Let the inferno consume you!"
-#define TEXT_SCORCH_2                   "BURN! Burn in the makers fire!"
-#define TEXT_SLAG_POT                   "I will burn away your impurities!"
-#define TEXT_SLAY_1                     "More scraps for the scrapheap!"
-#define TEXT_SLAY_2                     "Your bones will serve as kindling!"
-#define TEXT_BERSERK                    "Let it be finished!"
-#define TEXT_DEATH                      "I. Have. Failed."
-#define TEXT_FLAME_JETS                 "Ignis The Furnace Master begins to cast Flame Jets!"
+#define TEXT_AGGRO                      "insectes insolent! Votre sang va tempérer les armes utilisées pour récupérer ce monde!"
+#define TEXT_ACTIVATE_CONSTRUCT         "Lève-toi, soldats du creuset de fer! Le constructeur te demande!"
+#define TEXT_SCORCH_1                   "Laissez l'enfer vous consummer!"
+#define TEXT_SCORCH_2                   "BRÛLER! Brûlez dans le feu des décideurs!"
+#define TEXT_SLAG_POT                   "Je vais brûler vos impuretés!"
+#define TEXT_SLAY_1                     "Plus de restes pour le tas de feraille!"
+#define TEXT_SLAY_2                     "Vos os serviront de bois d'allumage!"
+#define TEXT_BERSERK                    "Que ce soit fini!"
+#define TEXT_DEATH                      "J'ai. Échoué."
+#define TEXT_FLAME_JETS                 "Ignis Le maître de la fournaise commence à lancer des jets de flammes!"
 
 #define SOUND_AGGRO                     15564
 #define SOUND_ACTIVATE_CONSTRUCT        15565

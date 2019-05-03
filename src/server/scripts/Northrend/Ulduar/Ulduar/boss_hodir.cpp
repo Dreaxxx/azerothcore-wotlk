@@ -130,14 +130,14 @@ enum HodirEvents
 #define SPELL_FROZEN_BLOWS              RAID_MODE(SPELL_FROZEN_BLOWS_10, SPELL_FROZEN_BLOWS_25)
 #define SPELL_SHAMAN_STORM_CLOUD        RAID_MODE(SPELL_SHAMAN_STORM_CLOUD_10, SPELL_SHAMAN_STORM_CLOUD_25)
 
-#define TEXT_HODIR_AGGRO                "You will suffer for this trespass!"
-#define TEXTEMOTE_HODIR_FROZEN_BLOWS    "Hodir roars furious."
-#define TEXT_HODIR_FLASH_FREEZE         "Winds of the north consume you!"
-#define TEXTEMOTE_HODIR_HARD_MODE_MISSED "Hodir shatters the Rare Cache of Hodir!"
-#define TEXT_HODIR_SLAIN_1              "Tragic. To come so far, only to fail."
-#define TEXT_HODIR_SLAIN_2              "Welcome to the endless winter."
-#define TEXT_HODIR_BERSERK              "Enough! This ends now!"
-#define TEXT_HODIR_DEFEATED             "I... I am released from his grasp... at last."
+#define TEXT_HODIR_AGGRO                "Vous allez souffrir pour cette violation"
+#define TEXTEMOTE_HODIR_FROZEN_BLOWS    "Hodir rugit furieusement."
+#define TEXT_HODIR_FLASH_FREEZE         "Les vents du nord te consument!"
+#define TEXTEMOTE_HODIR_HARD_MODE_MISSED "Hodir brise la cache rare de Hodir!"
+#define TEXT_HODIR_SLAIN_1              "Tragique. Pour venir si loin, seulement pour échouer."
+#define TEXT_HODIR_SLAIN_2              "Bienvenue dans l'hiver sans fin."
+#define TEXT_HODIR_BERSERK              "Assez! Cela se termine maintenant!"
+#define TEXT_HODIR_DEFEATED             "Je ... je suis libéré de son emprise ... enfin."
 
 enum HodirSounds
 {
@@ -410,7 +410,7 @@ public:
                         }
 
                         me->CastSpell((Unit*)NULL, SPELL_FLASH_FREEZE_CAST, false);
-                        me->MonsterTextEmote("Hodir begins to cast Flash Freeze!", 0, true);
+                        me->MonsterTextEmote("Hodir commence à lancer Flash Freeze!", 0, true);
                         me->MonsterYell(TEXT_HODIR_FLASH_FREEZE, LANG_UNIVERSAL, 0);
                         me->PlayDirectSound(SOUND_HODIR_FLASH_FREEZE, 0);
                         SmallIcicles(false);
@@ -428,7 +428,7 @@ public:
                     break;
                 case EVENT_FROZEN_BLOWS:
                     {
-                        me->MonsterTextEmote("Hodir gains Frozen Blows!", 0, true);
+                        me->MonsterTextEmote("Hodir gagne des coups gelés!", 0, true);
                         me->MonsterTextEmote(TEXTEMOTE_HODIR_FROZEN_BLOWS, 0);
                         me->PlayDirectSound(SOUND_HODIR_FROZEN_BLOWS, 0);
                         me->CastSpell(me, SPELL_FROZEN_BLOWS, true);
@@ -573,7 +573,7 @@ public:
     {
         npc_ulduar_icicleAI(Creature *pCreature) : NullCreatureAI(pCreature)
         {
-            timer1 = 2000;
+            timer1 = 3000;
             timer2 = 5000;
         }
 

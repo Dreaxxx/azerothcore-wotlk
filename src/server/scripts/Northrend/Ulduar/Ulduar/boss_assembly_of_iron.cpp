@@ -356,7 +356,7 @@ public:
                     break;
             }
 
-            // DoMeleeAttackIfReady();
+            DoMeleeAttackIfReady();
         }
     };
 };
@@ -645,7 +645,7 @@ public:
 
         void EnterCombat(Unit* who) override
         {
-            me->InterruptNonMeleeSpells(false);
+            me->InterruptNonMeleeSpells(true);
             me->setActive(true);
             me->SetInCombatWithZone();
             events.ScheduleEvent(EVENT_ENRAGE, 900000);
@@ -801,7 +801,7 @@ public:
                     Talk(SAY_BRUNDIR_FLIGHT);
                     
                     _flyPhase = true;
-                    _flyTarget = me->GetVictim();
+                    _flyTarget = SelectTargetFromPlayerList(150);
                     me->SetRegeneratingHealth(false);
                     me->SetDisableGravity(true);
 

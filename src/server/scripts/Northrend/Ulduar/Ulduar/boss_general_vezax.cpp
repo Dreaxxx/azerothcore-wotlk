@@ -50,7 +50,8 @@ enum VezaxSpellData
 
 enum VezaxNpcs
 {
-    // NPC_VEZAX                                = 33271,
+   // NPC_VEZAX                                   = 33271,
+    NPC_VEZAX_25                                = 33449,
     NPC_VEZAX_BUNNY                             = 33500,
     NPC_SARONITE_ANIMUS                         = 33524,
 };
@@ -86,13 +87,13 @@ enum VezaxEvents
     EVENT_RESTORE_TARGET                        = 11,
 };
 
-#define TEXT_VEZAX_AGGRO                            "Your destruction will herald a new age of suffering!"
-#define TEXT_VEZAX_SLAIN_1                          "You thought to stand before the legions of death... and survive?"
-#define TEXT_VEZAX_SLAIN_2                          "Defiance... a flaw of mortality."
-#define TEXT_VEZAX_SURGE                            "The black blood of Yogg-Saron courses through me! I. AM. UNSTOPPABLE!"
-#define TEXT_VEZAX_BERSERK                          "Your defeat was inevitable!"
-#define TEXT_VEZAX_DEATH                            "Oh, what horrors await...."
-#define TEXT_VEZAX_HARDMODE                         "Behold, now! Terror, absolute!"
+#define TEXT_VEZAX_AGGRO                            "Votre destruction annoncera un nouvel âge de souffrance!"
+#define TEXT_VEZAX_SLAIN_1                          "Vous pensiez vous tenir devant les légions de la mort ... et survivre?"
+#define TEXT_VEZAX_SLAIN_2                          "Defiance ... une faille de la mortalité."
+#define TEXT_VEZAX_SURGE                            "Le sang noir de Yogg-Saron me traverse! JE SUIS. INARRÊTABLE !"
+#define TEXT_VEZAX_BERSERK                          "Votre défaite est inévitable !"
+#define TEXT_VEZAX_DEATH                            "Oh, quelles horreurs attendent ...."
+#define TEXT_VEZAX_HARDMODE                         "Voici maintenant! Terreur, absolue!"
 
 
 class boss_vezax : public CreatureScript
@@ -286,7 +287,7 @@ public:
                     {
                         vaporsCount++;
                         me->CastSpell(me, SPELL_SUMMON_SARONITE_VAPORS, false);
-                        me->MonsterTextEmote("A cloud of saronite vapors coalesces nearby!", 0, true);
+                        me->MonsterTextEmote("Un nuage de vapeurs de saronite se coalesce à proximité!", 0, true);
 
                         if( vaporsCount < 6 || !hardmodeAvailable )
                             events.RepeatEvent(30000);
@@ -310,7 +311,7 @@ public:
                 case EVENT_SARONITE_VAPORS_SWIRL:
                     if (summons.size())
                     {
-                        me->MonsterTextEmote("The saronite vapors mass and swirl violently, merging into a monstrous form!", 0, true);
+                        me->MonsterTextEmote("La saronite se masse et tourbillonne violemment pour se fondre dans une forme monstrueuse!", 0, true);
                         if( Creature* sv = ObjectAccessor::GetCreature(*me, *(summons.begin())) )
                             sv->CastSpell(sv, SPELL_SARONITE_ANIMUS_FORMATION_VISUAL, true);
 
@@ -323,7 +324,7 @@ public:
                 case EVENT_SPELL_SUMMON_SARONITE_ANIMUS:
                     if (summons.size())
                     {
-                        me->MonsterTextEmote("A saronite barrier appears around General Vezax!", 0, true);
+                        me->MonsterTextEmote("Une barrière de saronite apparaît autour du général Vezax!", 0, true);
                         me->MonsterYell(TEXT_VEZAX_HARDMODE, LANG_UNIVERSAL, 0);
                         me->PlayDirectSound(SOUND_VEZAX_HARDMODE, 0);
 
@@ -458,6 +459,12 @@ public:
             if( pInstance )
                 if( Creature* vezax = ObjectAccessor::GetCreature(*me, pInstance->GetData64(TYPE_VEZAX)) )
                     vezax->AI()->DoAction(2);
+
+                if(me->GetMap()->Is25ManRaid())
+                {
+                    if( Creature* vezax = ObjectAccessor::GetCreature(*me, pInstance->GetData64(TYPE_VEZAX)) )
+                    vezax->SetLootMode(3);
+                }
         }
 
         void UpdateAI(uint32 diff)
