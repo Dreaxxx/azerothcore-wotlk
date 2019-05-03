@@ -3919,11 +3919,11 @@ void Unit::_ApplyAura(AuraApplication * aurApp, uint8 effMask)
 
             ModifyAuraState(aState, true);
         }
-        else if (caster)
+         else if (caster)
         {
             ConflagrateAuraStateDelayEvent *pEvent = new ConflagrateAuraStateDelayEvent(GetGUID(), caster->GetGUID());
             m_Events.AddEvent(pEvent, m_Events.CalculateTime(0)); // intended 700ms delay before allowing to cast conflagrate
-        }
+        } 
     }
 
     if (aurApp->GetRemoveMode())
@@ -17245,7 +17245,10 @@ void Unit::RemoveCharmedBy(Unit* charmer)
 void Unit::RestoreFaction()
 {
     if (GetTypeId() == TYPEID_PLAYER)
-        ToPlayer()->setFactionForRace(getRace());
+        if (ToPlayer()->GetMap()->IsBattleground())
+            ToPlayer()->setFaction(ToPlayer()->GetTeamId());
+        else
+            ToPlayer()->setFactionForRace(getRace());
     else
     {
         if (HasUnitTypeMask(UNIT_MASK_MINION))
