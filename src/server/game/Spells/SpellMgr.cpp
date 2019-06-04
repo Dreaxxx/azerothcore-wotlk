@@ -5838,7 +5838,17 @@ void SpellMgr::LoadDbcDataCorrections()
         case 74637:
             spellInfo->speed = 0;
             break;
-
+        //Blazing Aura
+        case 75885:
+        case 75886:
+            spellInfo->AttributesEx4 &= ~SPELL_ATTR4_IGNORE_RESISTANCES;
+            break;
+        //Meteor Strike
+        case 75952:
+        //Combustion Periodic
+        case 74629:
+            spellInfo->AttributesEx4 &= ~SPELL_ATTR4_IGNORE_RESISTANCES;
+            break;    
 
         // ///////////////////////////////////////////
         // ////////////////QUESTS/////////////////////

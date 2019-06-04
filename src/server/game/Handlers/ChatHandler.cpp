@@ -136,6 +136,29 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
             case CHAT_MSG_RAID:
             case CHAT_MSG_GUILD:
             case CHAT_MSG_BATTLEGROUND:
+           // check if addon messages are disabled
+                if (!sWorld->getBoolConfig(CONFIG_ADDON_CHANNEL))
+                {
+                    recvData.rfinish();
+                    return;
+                }
+
+                if (sWorld->getBoolConfig(CONFIG_CHATLOG_ADDON))
+                {
+                    std::string msg;
+                    recvData >> msg; 
+
+                    if (msg.empty())
+                        return;
+
+                    sScriptMgr->OnPlayerChat(sender, type, lang, msg);
+#ifdef ELUNA
+                    if (!sEluna->OnChat(sender, type, lang, msg))
+                        return;
+#endif
+                }
+
+                break;
             case CHAT_MSG_WHISPER:
                 // check if addon messages are disabled
                 if (!sWorld->getBoolConfig(CONFIG_ADDON_CHANNEL))
@@ -148,19 +171,15 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
                 {
                     std::string to, msg;
                     recvData >> to >> msg;
-                    Player* receiver = ObjectAccessor::FindPlayerByName(to, false); 
+                    Player* receiver = ObjectAccessor::FindPlayerByName(to, false);
 
                     if (msg.empty())
                         return;
 
                     sScriptMgr->OnPlayerChat(sender, type, lang, msg, receiver);
-#ifdef ELUNA
-                    if (!sEluna->OnChat(sender, type, lang, msg, receiver))
-                        return;
-#endif
                 }
 
-                break;
+                break;    
             default:
                 sLog->outError("Player %s (GUID: %u) sent a chatmessage with an invalid language/message type combination", 
                                                      GetPlayer()->GetName().c_str(), GetPlayer()->GetGUIDLow());

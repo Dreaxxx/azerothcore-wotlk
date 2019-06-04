@@ -899,6 +899,16 @@ enum AdditionalSaving
     ADDITIONAL_SAVING_QUEST_STATUS              = 0x02,
 };
 
+enum PlayerCommandStates
+{
+    CHEAT_NONE = 0x00,
+    CHEAT_GOD = 0x01,
+    CHEAT_CASTTIME = 0x02,
+    CHEAT_COOLDOWN = 0x04,
+    CHEAT_POWER = 0x08,
+    CHEAT_WATERWALK = 0x10
+};
+
 class PlayerTaxi
 {
     public:
@@ -1085,6 +1095,10 @@ class Player : public Unit, public GridObject<Player>
         explicit Player(WorldSession* session);
         ~Player();
 
+	public:
+        void SendChatMessage(const char *format, ...);
+        void AnuncioCfbg(bool action, Battleground* pBattleGround = NULL);
+
         void CleanupsBeforeDelete(bool finalCleanup = true);
 
         void AddToWorld();
@@ -1177,6 +1191,11 @@ class Player : public Unit, public GridObject<Player>
 
         void InitStatsForLevel(bool reapplyMods = false);
 
+        // .cheat command related
+        bool GetCommandStatus(uint32 command) const { return _activeCheats & command; }
+        void SetCommandStatusOn(uint32 command) { _activeCheats |= command; }
+        void SetCommandStatusOff(uint32 command) { _activeCheats &= ~command; }
+
         // Played Time Stuff
         time_t m_logintime;
         time_t m_Last_tick;
@@ -1198,6 +1217,7 @@ class Player : public Unit, public GridObject<Player>
         void RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent = false);
         uint32 GetPhaseMaskForSpawn() const;                // used for proper set phase for DB at GM-mode creature/GO spawn
 
+		void BuildPlayerChat(WorldPacket* data, uint8 msgtype, std::string const& text, uint32 language) const;
         void Say(std::string const& text, const uint32 language);
         void Yell(std::string const& text, const uint32 language);
         void TextEmote(std::string const& text);
@@ -2936,6 +2956,8 @@ class Player : public Unit, public GridObject<Player>
         InstanceTimeMap _instanceResetTimes;
         uint32 _pendingBindId;
         uint32 _pendingBindTimer;
+
+        uint32 _activeCheats;
 
         // duel health and mana reset attributes
         uint32 healthBeforeDuel;

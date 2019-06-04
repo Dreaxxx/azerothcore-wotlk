@@ -65,6 +65,12 @@ public:
             return false;
         }
 
+        if (player->IsActiveQuest(entry))
+        {
+            handler->PSendSysMessage("This quest is already active!");
+            return false;
+        }
+
         // check item starting quest (it can work incorrectly if added without item in inventory)
         ItemTemplateContainer const* itc = sObjectMgr->GetItemTemplateStore();
         ItemTemplateContainer::const_iterator result = find_if(itc->begin(), itc->end(), Finder<uint32, ItemTemplate>(entry, &ItemTemplate::StartQuest));

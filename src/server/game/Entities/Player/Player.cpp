@@ -909,6 +909,8 @@ Player::Player(WorldSession* session): Unit(true), m_mover(this)
 
     SetPendingBind(0, 0);
 
+    _activeCheats = CHEAT_NONE;
+
     m_achievementMgr = new AchievementMgr(this);
     m_reputationMgr = new ReputationMgr(this);
 
@@ -12768,6 +12770,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
 #endif
 
     sScriptMgr->OnEquip(this, pItem, bag, slot, update);
+    UpdateForQuestWorldObjects();
     return pItem;
 }
 
@@ -21801,15 +21804,22 @@ void Player::InitDisplayIds()
         return;
     }
 
+    if (EstaTransformado() || HasAuraType(SPELL_AURA_TRANSFORM)) // If its morphed or haves aura transform do nothing
+        return;
+
+    bool isMorphed = GetNativeDisplayId() != GetDisplayId(); //[CFBG] Force morph on BG
+
     uint8 gender = getGender();
     switch (gender)
     {
         case GENDER_FEMALE:
-            SetDisplayId(info->displayId_f);
+            if (!isMorphed) //[CFBG]
+                SetDisplayId(info->displayId_f); 
             SetNativeDisplayId(info->displayId_f);
             break;
         case GENDER_MALE:
-            SetDisplayId(info->displayId_m);
+            if (!isMorphed) //[CFBG]
+                SetDisplayId(info->displayId_m);
             SetNativeDisplayId(info->displayId_m);
             break;
         default:
@@ -27415,4 +27425,16 @@ void Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     AsynchPetSummon* asynchPetInfo = new AsynchPetSummon(entry, pos, petType, duration, createdBySpell, casterGUID);
     Pet::LoadPetFromDB(this, asynchLoadType, entry, 0, false, asynchPetInfo);
+}
+
+void Player::BuildPlayerChat(WorldPacket* data, uint8 msgtype, const std::string& text, uint32 language) const
+{
+	*data << uint8(msgtype);
+	*data << uint32(language);
+	*data << uint64(GetGUID());
+	*data << uint32(0);                                      // constant unknown time
+	*data << uint64(GetGUID());
+	*data << uint32(text.length() + 1);
+	*data << text;
+	*data << uint8(GetChatTag());
 }
